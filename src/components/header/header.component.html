@@ -1,4 +1,3 @@
-
 <header class="h-16 flex items-center justify-between px-4 md:px-8 bg-white border-b border-gray-200">
   <div class="flex items-center">
     @if (isAuthenticated()) {
@@ -25,7 +24,7 @@
       </div>
     } @else {
       <div class="flex items-center cursor-pointer" (click)="onNavigate('home')">
-        <img src="assets/logos/press-house-logo.png" alt="Press House Logo" class="h-10">
+        <img ngSrc="assets/logos/press-house-logo.png" alt="Press House Logo" priority width="40" height="40" class="h-10">
         <div class="text-right mr-2">
           <h1 class="text-lg font-bold text-ph-blue">بيت الصحافة</h1>
           <p class="text-xs text-gray-500">Yemen Press House</p>
@@ -114,7 +113,7 @@
 
       <div class="relative">
         <button (click)="toggleDropdown()" class="flex items-center space-i-2">
-          <img [src]="currentUser.avatar" alt="User Avatar" class="w-10 h-10 rounded-full bg-gray-200 object-cover">
+          <img [ngSrc]="currentUser.avatar" alt="User Avatar" priority width="40" height="40" class="w-10 h-10 rounded-full bg-gray-200 object-cover">
           <div class="hidden sm:block text-right">
             <p class="font-semibold text-sm text-gray-800">{{ currentUser.name }}</p>
             <p class="text-xs text-gray-500">{{ getRoleDisplayName(currentUser.role) }}</p>

@@ -1,6 +1,5 @@
-
 import { Component, ChangeDetectionStrategy, signal, inject, output, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DashboardLayoutService } from '../../services/dashboard-layout.service';
 import { UserService } from '../../services/user.service';
@@ -50,7 +49,7 @@ interface ActivityItem {
 @Component({
   selector: 'app-journalist-workspace',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './journalist-workspace.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ToolService } from '../../services/tool.service';
 import { UserService } from '../../services/user.service';
 import { ToolCardComponent } from '../tool-card/tool-card.component';
@@ -9,7 +9,7 @@ type MapTab = 'ushahidi' | 'kepler' | 'earth-engine' | 'live';
 @Component({
   selector: 'app-maps',
   standalone: true,
-  imports: [CommonModule, ToolCardComponent],
+  imports: [CommonModule, ToolCardComponent, NgOptimizedImage],
   templateUrl: './maps.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,6 +1,5 @@
-
 import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 interface ViolationRecord {
@@ -17,7 +16,7 @@ interface ViolationRecord {
 @Component({
   selector: 'app-dastoor-meter',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './dastoor-meter.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

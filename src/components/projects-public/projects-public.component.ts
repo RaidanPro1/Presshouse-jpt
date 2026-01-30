@@ -1,12 +1,12 @@
 import { Component, ChangeDetectionStrategy, output, signal, OnDestroy, afterNextRender, inject, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ContentService } from '../../services/content.service';
 import { SettingsService } from '../../services/settings.service';
 
 @Component({
   selector: 'app-projects-public',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './projects-public.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

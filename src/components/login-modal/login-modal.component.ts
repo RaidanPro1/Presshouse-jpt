@@ -1,11 +1,10 @@
-
 import { Component, ChangeDetectionStrategy, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-login-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './login-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

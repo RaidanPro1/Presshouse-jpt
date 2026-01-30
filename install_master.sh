@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ======================================================================
-# 🇾🇪 YemenJPT Enterprise - "Zero-Fail" Master Installer (V4.101)
+# 🇾🇪 YemenJPT Enterprise - "Zero-Fail" Master Installer (V4.102)
 # ======================================================================
 # Target OS: Ubuntu 24.04 LTS
 # This script automates the complete setup of the YemenJPT platform.
@@ -34,7 +34,7 @@ check_root() {
 }
 
 preflight_checks() {
-    echo -e "🔎 [1/7] Performing Pre-flight System Checks..."
+    echo -e "🔎 [1/9] Performing Pre-flight System Checks..."
     
     MEM_TOTAL_KB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
     MEM_TOTAL_GB=$((MEM_TOTAL_KB / 1024 / 1024))
@@ -53,12 +53,12 @@ preflight_checks() {
         echo -e "   ✅ Disk Space: ${DISK_FREE_GB}GB - OK"
     fi
 
-    for cmd in docker curl git; do
+    for cmd in docker curl git python3 pip3; do
         if ! command -v $cmd &> /dev/null; then
             echo -e "   ⏳ '$cmd' not found. Installing dependencies..."
             export DEBIAN_FRONTEND=noninteractive
             apt-get update > /dev/null
-            apt-get install -y apt-transport-https ca-certificates curl git software-properties-common > /dev/null
+            apt-get install -y apt-transport-https ca-certificates curl git software-properties-common python3-pip > /dev/null
             
             if ! command -v docker &> /dev/null; then
                 echo -e "   ⏳ Installing Docker..."
@@ -71,63 +71,68 @@ preflight_checks() {
             fi
         fi
     done
+    
+    echo -e "   -> Installing Python dependencies for DNS automation..."
+    pip3 install requests > /dev/null
     echo -e "   ✅ All dependencies are present."
 }
 
-setup_environment() {
-    echo -e "🔑 [2/7] Setting up Environment Configuration in ${INSTALL_DIR}..."
-    ENV_FILE="${INSTALL_DIR}/.env"
-    ENV_EXAMPLE_FILE=".env.example"
-
-    if [ ! -f "$ENV_EXAMPLE_FILE" ]; then
-        echo -e "${RED}❌ Error: .env.example file not found in repository. Aborting.${NC}"
-        exit 1
-    fi
-
-    cp "$ENV_EXAMPLE_FILE" "$ENV_FILE"
-
-    if grep -q "generate_" "$ENV_FILE"; then
-        echo "   -> Found placeholders. Generating secure random passwords..."
-        sed -i "s/generate_a_strong_postgres_password/$(openssl rand -base64 32 | tr -d '/+=')/g" "$ENV_FILE"
-        sed -i "s/generate_a_strong_mariadb_password/$(openssl rand -base64 32 | tr -d '/+=')/g" "$ENV_FILE"
-        sed -i "s/generate_a_very_strong_mariadb_root_password/$(openssl rand -base64 32 | tr -d '/+=')/g" "$ENV_FILE"
-        sed -i "s/generate_a_strong_redis_password/$(openssl rand -base64 32 | tr -d '/+=')/g" "$ENV_FILE"
-        sed -i "s/generate_a_strong_minio_password/$(openssl rand -base64 32 | tr -d '/+=')/g" "$ENV_FILE"
-        echo "   ✅ Secure passwords generated and saved to .env file."
+setup_swap() {
+    echo -e "💾 [2/9] Setting up 12GB Swap File..."
+    if [ -f /swapfile ]; then
+        echo "   ✅ Swap file already exists. Skipping."
     else
-        echo "   ✅ .env file is already configured."
+        fallocate -l 12G /swapfile
+        chmod 600 /swapfile
+        mkswap /swapfile
+        swapon /swapfile
+        echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab
+        echo "   ✅ 12GB Swap file created and activated."
+        free -h
     fi
 }
 
 copy_project_files() {
-    echo -e "📂 [3/7] Copying project files to ${INSTALL_DIR}..."
+    echo -e "📂 [3/9] Copying project files to ${INSTALL_DIR}..."
     mkdir -p "${INSTALL_DIR}"
-    # Use rsync to copy all files, which is more efficient
     rsync -a --exclude='.git' --exclude='install_master.sh' . "${INSTALL_DIR}/"
     echo "   ✅ Project files copied successfully."
 }
 
+setup_environment() {
+    echo -e "🔑 [4/9] Setting up Environment Configuration in ${INSTALL_DIR}..."
+    ENV_FILE="${INSTALL_DIR}/.env"
+    ENV_EXAMPLE_FILE="${INSTALL_DIR}/.env.example"
+
+    if [ ! -f "$ENV_EXAMPLE_FILE" ]; then
+        echo -e "${RED}❌ Error: .env.example file not found. Aborting.${NC}"
+        exit 1
+    fi
+
+    cp "$ENV_EXAMPLE_FILE" "$ENV_FILE"
+    echo "   ✅ .env file created from template."
+}
+
+
 create_data_directories() {
-    echo -e "📦 [4/7] Creating Persistent Data Directories..."
+    echo -e "📦 [5/9] Creating Persistent Data Directories..."
     DATA_ROOT="${INSTALL_DIR}/data"
     
     declare -a DIRS=(
-        "npm/data" "npm/letsencrypt" "portainer" "postgres" "mariadb" "redis" "minio"
+        "npm/data" "npm/letsencrypt" "portainer" "postgres" "mariadb" "redis"
         "ollama" "label-studio" "n8n" "ghost" "wordpress" "azuracast/stations" 
-        "restreamer/config" "restreamer/data" "vaultwarden" "languagetool" "gitea"
+        "restreamer/config" "restreamer/data" "vaultwarden" "languagetool" "gitea" "posteio"
     )
 
     for dir in "${DIRS[@]}"; do
         mkdir -p "${DATA_ROOT}/${dir}"
     done
-
-    # Set permissions. 1000:1000 is a common user/group for containers.
-    chown -R 1000:1000 "${DATA_ROOT}"
+    
     echo "   ✅ Data directory structure created."
 }
 
 setup_network() {
-    echo -e "🌐 [5/7] Setting up Docker Network..."
+    echo -e "🌐 [6/9] Setting up Docker Network..."
     if ! docker network ls | grep -q "raidan_net"; then
         echo "   -> Network 'raidan_net' not found. Creating..."
         docker network create --subnet=172.25.0.0/16 "raidan_net"
@@ -137,13 +142,29 @@ setup_network() {
     fi
 }
 
+setup_dns() {
+    echo -e "☁️  [7/9] Automatically configuring Cloudflare DNS records..."
+    cd "${INSTALL_DIR}"
+    if [ -f .env ]; then
+        export $(grep -v '^#' .env | xargs)
+        if [ -z "$CF_DNS_API_TOKEN" ]; then
+            echo -e "${YELLOW}   ⚠️ Warning: CF_DNS_API_TOKEN not found in .env file. Skipping automatic DNS setup.${NC}"
+        else
+            python3 "${INSTALL_DIR}/scripts/setup_dns.py"
+            echo "   ✅ DNS configuration script executed."
+        fi
+    else
+        echo -e "${RED}   ❌ Error: .env file not found. Cannot run DNS setup.${NC}"
+    fi
+}
+
 build_and_deploy() {
     cd "${INSTALL_DIR}"
-    echo -e "🐳 [6/7] Building Custom Docker Images..."
+    echo -e "🐳 [8/9] Building Custom Docker Images..."
     docker compose build --no-cache
     echo "   ✅ Custom images built successfully."
 
-    echo -e "🚀 [7/7] Deploying the Enterprise Stack..."
+    echo -e "🚀 [9/9] Deploying the Enterprise Stack..."
     echo "   (This may take several minutes as images are downloaded)"
     docker compose up -d
     echo "   ✅ All services are starting in the background."
@@ -165,7 +186,8 @@ health_check_and_summary() {
             echo -e "${GREEN}=====================================================${NC}"
             echo
             echo "   The YemenJPT Enterprise stack is now running in ${INSTALL_DIR}."
-            echo "   Your next step is to configure Nginx Proxy Manager."
+            echo "   DNS records have been automatically configured in Cloudflare."
+            echo "   Your next step is to configure Nginx Proxy Manager to route them."
             echo
             echo -e "   ${YELLOW}➡️  Open your browser and navigate to: http://${SERVER_IP}:8181${NC}"
             echo
@@ -173,7 +195,7 @@ health_check_and_summary() {
             echo "   - Email:    admin@example.com"
             echo "   - Password: changeme"
             echo
-            echo "   Follow the instructions in the README.md to configure your subdomains for ph-ye.org."
+            echo "   Follow the instructions in the README.md to add proxy hosts for your services (e.g., dashboard.ph-ye.org)."
             echo -e "   ${BLUE}To view logs, run: 'cd ${INSTALL_DIR} && sudo docker compose logs -f'${NC}"
             return
         fi
@@ -190,10 +212,12 @@ main() {
     print_header
     check_root
     preflight_checks
+    setup_swap
     copy_project_files
     setup_environment
     create_data_directories
     setup_network
+    setup_dns
     build_and_deploy
     health_check_and_summary
 }

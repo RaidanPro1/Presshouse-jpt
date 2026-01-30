@@ -12,7 +12,7 @@
           <label class="block mb-2 text-sm font-medium">1. ارفع صورة أو استخدم الكاميرا</label>
           @if (imagePreview()) {
             <div class="relative">
-              <img [src]="imagePreview()" alt="Image preview" class="w-full h-64 object-contain rounded-lg bg-gray-100">
+              <img [ngSrc]="imagePreview()" alt="Image preview" width="512" height="256" class="w-full h-64 object-contain rounded-lg bg-gray-100">
               <button (click)="imagePreview.set(null); imageFile.set(null)" class="absolute top-2 right-2 bg-black/50 text-white rounded-full p-1.5 hover:bg-black/75">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
               </button>

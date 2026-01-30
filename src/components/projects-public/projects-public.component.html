@@ -7,7 +7,7 @@
         [class.opacity-100]="currentSlide() === i"
         [class.opacity-0]="currentSlide() !== i">
         @if (!settingsService.isLowBandwidthMode()) {
-          <img [src]="slide.imageUrl" class="w-full h-full object-cover" alt="{{slide.title}}">
+          <img [ngSrc]="slide.imageUrl" [alt]="slide.title" [priority]="i === 0" width="1280" height="720" class="w-full h-full object-cover">
         } @else {
           <div class="w-full h-full bg-gray-700"></div>
         }
@@ -45,7 +45,7 @@
         @for(project of projects(); track project.id) {
           <div class="bg-base-100 rounded-lg shadow-lg overflow-hidden flex flex-col group">
             @if (!settingsService.isLowBandwidthMode()) {
-              <img [src]="project.imageUrl" alt="{{project.title}}" class="w-full h-56 object-cover">
+              <img [ngSrc]="project.imageUrl" [alt]="project.title" width="400" height="224" loading="lazy" class="w-full h-56 object-cover">
             } @else {
               <div class="w-full h-56 bg-gray-200"></div>
             }

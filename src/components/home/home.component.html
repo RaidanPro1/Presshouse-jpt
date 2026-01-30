@@ -1,4 +1,3 @@
-
 <!-- Professional NGO Homepage -->
 <div class="animate-fade-in bg-base-100">
 
@@ -143,7 +142,7 @@
         @for(item of news(); track item.id) {
            <div class="bg-base-100 rounded-lg shadow-md overflow-hidden group">
             @if (!settingsService.isLowBandwidthMode()) {
-              <img [src]="item.imageUrl" alt="{{item.title}}" class="w-full h-48 object-cover">
+              <img [ngSrc]="item.imageUrl" alt="{{item.title}}" width="400" height="192" loading="lazy" class="w-full h-48 object-cover">
             } @else {
               <div class="w-full h-48 bg-gray-200"></div>
             }
@@ -168,7 +167,7 @@
         @for(partner of partners(); track partner.name) {
           <div class="h-20 flex items-center justify-center" title="{{ partner.name }}">
             @if (!settingsService.isLowBandwidthMode()) {
-              <img [src]="partner.logoUrl" [alt]="partner.name" class="max-h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
+              <img [ngSrc]="partner.logoUrl" [alt]="partner.name" width="128" height="64" loading="lazy" class="max-h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
             } @else {
               <div class="h-16 w-32 bg-gray-300 rounded-md flex items-center justify-center text-xs text-gray-500">{{partner.name}}</div>
             }

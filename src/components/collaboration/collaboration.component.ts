@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NotificationService } from '../../services/notification.service';
 import { SettingsService } from '../../services/settings.service';
@@ -75,7 +75,7 @@ type CollaborationTab = 'overview' | 'tasks' | 'files' | 'discussion' | 'meeting
 @Component({
   selector: 'app-collaboration',
   standalone: true,
-  imports: [CommonModule, FormsModule, WebrtcCallComponent],
+  imports: [CommonModule, FormsModule, WebrtcCallComponent, NgOptimizedImage],
   templateUrl: './collaboration.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

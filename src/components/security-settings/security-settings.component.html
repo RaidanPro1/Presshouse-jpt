@@ -1,4 +1,3 @@
-
 <section class="space-y-12">
   <!-- Two-Factor Authentication -->
   <div class="p-6 border rounded-lg bg-base-100 shadow-sm">
@@ -27,28 +26,23 @@
         <div class="flex flex-col md:flex-row gap-6 items-center">
             <div class="text-center">
                 <p class="text-sm mb-2">1. امسح هذا الرمز باستخدام تطبيق المصادقة (مثل Google Authenticator).</p>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/YemenJPT:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=YemenJPT" alt="QR Code" class="mx-auto border p-2 bg-white">
+                <img ngSrc="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=otpauth://totp/YemenJPT:user@example.com?secret=JBSWY3DPEHPK3PXP&issuer=YemenJPT" alt="QR Code" width="150" height="150" class="mx-auto border p-2 bg-white">
             </div>
             <div class="flex-grow">
                 <label for="verification-code" class="block text-sm font-medium mb-2">2. أدخل رمز التحقق المكون من 6 أرقام</label>
-                <input type="text" id="verification-code" [(ngModel)]="verificationCode" class="w-full p-2 border rounded-md font-mono text-lg tracking-widest text-center" placeholder="123 456" maxlength="6">
+                <input type="text" id="verification-code" [(ngModel)]="verificationCode" class="w-full p-2 border rounded-md font-mono text-lg tracking-widest text-center" placeholder="123456" maxlength="6">
                 <div class="mt-4 flex gap-2">
-                    <button (click)="verify2fa()" class="flex-1 px-4 py-2 text-white bg-ph-blue rounded-lg">تفعيل</button>
-                    <button (click)="cancel2faSetup()" class="flex-1 px-4 py-2 bg-gray-200 rounded-lg">إلغاء</button>
+                    <button (click)="verify2fa()" class="px-4 py-2 text-sm text-white bg-green-600 rounded-lg">تحقق وفعّل</button>
+                    <button (click)="cancel2faSetup()" class="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-lg">إلغاء</button>
                 </div>
             </div>
         </div>
-      </div>
-    }
-    
-    @if(is2faEnabled() && !show2faSetup()){
-      <div class="mt-6 border-t pt-6">
-        <h3 class="font-semibold">رموز الاسترداد</h3>
-        <p class="text-sm text-gray-500 mb-2">احتفظ بهذه الرموز في مكان آمن. يمكنك استخدامها للوصول إلى حسابك في حال فقدان جهازك.</p>
-        <div class="p-4 bg-gray-100 rounded-md font-mono text-center space-y-1">
-          @for(code of recoveryCodes(); track code) {
-            <span>{{ code }}</span>
-          }
+        <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <h4 class="font-bold text-yellow-800">3. احفظ رموز الاسترداد الخاصة بك!</h4>
+            <p class="text-sm text-yellow-700">احتفظ بهذه الرموز في مكان آمن. ستستخدمها للوصول إلى حسابك إذا فقدت جهازك.</p>
+            <div class="mt-2 p-3 bg-white font-mono text-center space-y-1 text-sm rounded">
+                @for(code of recoveryCodes(); track code){ <span>{{ code }}</span> }
+            </div>
         </div>
       </div>
     }
@@ -56,56 +50,59 @@
 
   <!-- Trusted Devices -->
   <div class="p-6 border rounded-lg bg-base-100 shadow-sm">
-    <h2 class="text-xl font-bold mb-4">الأجهزة الموثوقة</h2>
-    <p class="text-sm text-gray-500 mb-4">هذه هي الأجهزة التي سجلت الدخول منها. قم بإلغاء وثوقية أي جهاز لا تتعرف عليه.</p>
-    <div class="space-y-3">
+      <h2 class="text-xl font-bold mb-4">الأجهزة الموثوقة</h2>
+      <p class="text-sm text-gray-500 mb-4">هذه هي الأجهزة التي سجلت الدخول منها. يمكنك إلغاء وثوقية أي جهاز لم تعد تستخدمه.</p>
+      <div class="space-y-3">
         @for(device of trustedDevices(); track device.id) {
-          <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+          <div class="flex items-center justify-between p-3 bg-base-200/50 rounded-lg">
             <div class="flex items-center gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m-6 0h6" /><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25A2.25 2.25 0 0 1 5.25 3h13.5A2.25 2.25 0 0 1 21 5.25Z" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m-6 0V5.625A2.625 2.625 0 0 1 11.25 3h1.5A2.625 2.625 0 0 1 15 5.625v11.625" /></svg>
               <div>
-                <p class="font-semibold text-sm">{{ device.browser }} on {{ device.os }}</p>
+                <p class="font-semibold">{{ device.browser }} on {{ device.os }}</p>
                 <p class="text-xs text-gray-500">{{ device.location }} • آخر دخول: {{ device.lastLogin }}</p>
               </div>
+               @if (device.isCurrent) {
+                <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-800">الجهاز الحالي</span>
+              }
             </div>
-            @if(device.isCurrent) {
-                <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">هذا الجهاز</span>
-            } @else {
-                <button (click)="revokeDevice(device.id)" class="text-xs font-semibold text-red-600 hover:underline">إلغاء الوثوقية</button>
+             @if (!device.isCurrent) {
+              <button (click)="revokeDevice(device.id)" class="text-sm font-medium text-red-600 hover:underline">إلغاء الوثوقية</button>
             }
           </div>
         }
-    </div>
+      </div>
   </div>
 
   <!-- Change Password -->
   <div class="p-6 border rounded-lg bg-base-100 shadow-sm">
-    <h2 class="text-xl font-bold mb-4">تغيير كلمة المرور</h2>
-    <div class="max-w-md space-y-4">
-      <div>
-        <label for="current_password" class="block text-sm font-medium">كلمة المرور الحالية</label>
-        <input type="password" id="current_password" [(ngModel)]="passwordData().current" class="w-full p-2 border rounded-md bg-gray-50">
-      </div>
-      <div>
-        <label for="new_password" class="block text-sm font-medium">كلمة المرور الجديدة</label>
-        <input type="password" id="new_password" [(ngModel)]="passwordData().new" class="w-full p-2 border rounded-md bg-gray-50">
-      </div>
-      <div>
-        <label for="confirm_password" class="block text-sm font-medium">تأكيد كلمة المرور الجديدة</label>
-        <input type="password" id="confirm_password" [(ngModel)]="passwordData().confirm" class="w-full p-2 border rounded-md bg-gray-50">
-        @if(passwordChangeStatus() === 'error' && passwordData().new !== passwordData().confirm) {
+      <h2 class="text-xl font-bold mb-4">تغيير كلمة المرور</h2>
+      <form #passwordForm="ngForm" (ngSubmit)="changePassword()" class="space-y-4 max-w-md">
+         <div>
+          <label for="current-password" class="block text-sm font-medium mb-1">كلمة المرور الحالية</label>
+          <input type="password" id="current-password" name="currentPassword" [(ngModel)]="passwordData().current" required class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+         <div>
+          <label for="new-password" class="block text-sm font-medium mb-1">كلمة المرور الجديدة</label>
+          <input type="password" id="new-password" name="newPassword" [(ngModel)]="passwordData().new" required minlength="8" class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+         <div>
+          <label for="confirm-password" class="block text-sm font-medium mb-1">تأكيد كلمة المرور الجديدة</label>
+          <input type="password" id="confirm-password" name="confirmPassword" [(ngModel)]="passwordData().confirm" required class="w-full p-2 border rounded-md bg-gray-50" [class.border-red-500]="passwordForm.submitted && passwordData().new !== passwordData().confirm">
+           @if (passwordForm.submitted && passwordData().new !== passwordData().confirm) {
             <p class="text-xs text-red-500 mt-1">كلمتا المرور غير متطابقتين.</p>
-        }
-      </div>
-       <div class="flex items-center gap-4">
-        <button (click)="changePassword()" class="px-5 py-2.5 font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark">
-          تغيير كلمة المرور
-        </button>
-         @if(passwordChangeStatus() === 'success') {
-            <span class="text-sm text-green-600 animate-fade-in">✓ تم تغيير كلمة المرور بنجاح.</span>
-         }
-       </div>
-    </div>
+          }
+        </div>
+        <div class="flex items-center justify-between">
+           <button type="submit" [disabled]="passwordForm.invalid || passwordChangeStatus() === 'success'" class="px-5 py-2 text-sm font-semibold text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark disabled:bg-gray-400">
+            تغيير كلمة المرور
+          </button>
+           @if (passwordChangeStatus() === 'success') {
+            <span class="text-sm text-green-600">تم تغيير كلمة المرور بنجاح!</span>
+          }
+           @if (passwordChangeStatus() === 'error') {
+            <span class="text-sm text-red-600">فشل تغيير كلمة المرور. يرجى التحقق من المدخلات.</span>
+          }
+        </div>
+      </form>
   </div>
-
 </section>

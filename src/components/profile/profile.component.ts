@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 
@@ -18,7 +18,7 @@ interface PortfolioItem {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './profile.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

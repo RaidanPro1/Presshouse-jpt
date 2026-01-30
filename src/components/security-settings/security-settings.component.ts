@@ -1,6 +1,5 @@
-
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService } from '../../services/confirmation.service';
 import { LoggerService } from '../../services/logger.service';
@@ -18,7 +17,7 @@ interface TrustedDevice {
 @Component({
   selector: 'app-security-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './security-settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

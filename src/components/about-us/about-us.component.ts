@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, OnDestroy, afterNextRender, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ContentService } from '../../services/content.service';
 import { SettingsService } from '../../services/settings.service';
 
@@ -12,7 +12,7 @@ interface Slide {
 @Component({
   selector: 'app-about-us',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './about-us.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

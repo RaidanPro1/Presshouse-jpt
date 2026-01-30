@@ -1,6 +1,5 @@
-
 import { Component, ChangeDetectionStrategy, inject, output, signal, OnDestroy, afterNextRender, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ContentService } from '../../services/content.service';
 import { SettingsService } from '../../services/settings.service';
 import { ViolationsService } from '../../services/violations.service';
@@ -10,7 +9,7 @@ import { ToolStateService } from '../../services/tool-state.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { GeminiService } from '../../services/gemini.service';
 import { TranslationService } from '../../services/translation.service';
@@ -9,7 +9,7 @@ const MAX_IMAGE_PROMPT_LENGTH = 1000;
 @Component({
   selector: 'app-image-analysis',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgOptimizedImage],
   templateUrl: './image-analysis.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

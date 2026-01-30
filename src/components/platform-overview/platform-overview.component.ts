@@ -1,6 +1,5 @@
-
 import { Component, ChangeDetectionStrategy, computed, inject, output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { ToolService } from '../../services/tool.service';
 import { Tool } from '../../models/tool.model';
 import { ToolCardComponent } from '../tool-card/tool-card.component';
@@ -26,7 +25,7 @@ interface FeatureSection {
 @Component({
   selector: 'app-platform-overview',
   standalone: true,
-  imports: [CommonModule, ToolCardComponent, PageHeaderComponent],
+  imports: [CommonModule, ToolCardComponent, PageHeaderComponent, NgOptimizedImage],
   templateUrl: './platform-overview.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })

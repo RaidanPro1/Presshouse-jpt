@@ -1,4 +1,3 @@
-
 <div class="bg-base-100">
 
   <!-- Hero Slider Section -->
@@ -9,7 +8,7 @@
         [class.opacity-100]="currentSlide() === i"
         [class.opacity-0]="currentSlide() !== i">
         @if (!settingsService.isLowBandwidthMode()) {
-          <img [src]="slide.imageUrl" class="w-full h-full object-cover" alt="{{slide.title}}">
+          <img [ngSrc]="slide.imageUrl" [priority]="i === 0" width="1920" height="1080" class="w-full h-full object-cover" alt="{{slide.title}}">
         } @else {
           <div class="w-full h-full bg-gray-700"></div>
         }
@@ -100,7 +99,7 @@
         @for(member of team(); track member.id) {
           <div class="text-center">
             @if (!settingsService.isLowBandwidthMode()) {
-              <img [src]="member.imageUrl" alt="{{member.name}}" class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg object-cover">
+              <img [ngSrc]="member.imageUrl" [alt]="member.name" width="96" height="96" loading="lazy" class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg object-cover">
             } @else {
               <div class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg bg-gray-300"></div>
             }
@@ -122,7 +121,7 @@
         @for(member of advisors(); track member.id) {
           <div class="text-center">
             @if (!settingsService.isLowBandwidthMode()) {
-              <img [src]="member.imageUrl" alt="{{member.name}}" class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg object-cover">
+              <img [ngSrc]="member.imageUrl" [alt]="member.name" width="96" height="96" loading="lazy" class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg object-cover">
             } @else {
                <div class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg bg-gray-300"></div>
             }
@@ -143,7 +142,7 @@
         @for(partner of partners(); track partner.name) {
           <a [href]="partner.url" target="_blank" rel="noopener noreferrer" class="h-20 flex items-center justify-center" title="{{ partner.name }}">
              @if (!settingsService.isLowBandwidthMode()) {
-              <img [src]="partner.logoUrl" [alt]="partner.name" class="max-h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
+              <img [ngSrc]="partner.logoUrl" [alt]="partner.name" width="128" height="64" loading="lazy" class="max-h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
             } @else {
               <div class="h-16 w-32 bg-gray-300 rounded flex items-center justify-center text-xs text-gray-500">{{partner.name}}</div>
             }

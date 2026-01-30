@@ -1,6 +1,5 @@
-
 import { Component, ChangeDetectionStrategy, inject, output, input, signal, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { SearchService } from '../../services/search.service';
 import { User, UserRole, getRoleDisplayName } from '../../services/user.service';
 import { NotificationService } from '../../services/notification.service';
@@ -22,7 +21,7 @@ interface PublicNavLink {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgOptimizedImage],
   templateUrl: './header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
