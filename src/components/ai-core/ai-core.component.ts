@@ -1,12 +1,12 @@
-
 import { Component, ChangeDetectionStrategy, signal, inject, computed, effect, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { ImageAnalysisComponent } from '../image-analysis/image-analysis.component';
 import { GeminiService } from '../../services/gemini.service';
 import { SettingsService } from '../../services/settings.service';
 import { UserService } from '../../services/user.service';
-import { Content, GenerateContentResponse, Tool as GeminiTool, Type } from '@google/genai';
+import { Content, GenerateContentResponse, Tool as GeminiTool, Type, Part } from '@google/genai';
 import { ToolStateService } from '../../services/tool-state.service';
 import { ToolService } from '../../services/tool.service';
 import { LoggerService } from '../../services/logger.service';
@@ -71,8 +71,10 @@ export class AiCoreComponent {
   private getAllToolsForAI = computed(() => {
     const user = this.user();
     if (!user) return [];
+    // Only return tools that are executable via CLI for now
+    const executableTools = ['sherlock-maigret', 'spiderfoot'];
     return this.toolService.tools().filter(tool => {
-        if (!tool.isActive || tool.id === 'ai-assistant') return false;
+        if (!tool.isActive || !executableTools.includes(tool.id)) return false;
         if (user.role === 'super-admin') return true;
         return tool.allowedRoles.includes(user.role);
     });
@@ -81,29 +83,31 @@ export class AiCoreComponent {
   // Dynamically generate the Tool Schema for Gemini based on user permissions
   geminiTools = computed((): GeminiTool[] | undefined => {
     const allowedTools = this.getAllToolsForAI();
-    // Only enable tools if using Google provider (Local LLM tool use is experimental)
     if (!allowedTools.length || this.currentAiProvider() === 'local') return undefined;
 
-    return [{
-        functionDeclarations: [
-            {
-                name: 'run_tool',
-                description: 'Open or execute a specialized tool on the YemenJPT platform. Use this when the user asks to perform a specific task like searching, archiving, or checking facts.',
-                parameters: {
-                    type: Type.OBJECT,
-                    properties: {
-                        toolId: {
-                            type: Type.STRING,
-                            description: 'The unique ID of the tool to run.',
-                            enum: allowedTools.map(t => t.id)
-                        }
-                    },
-                    required: ['toolId'],
-                },
-            },
-        ],
-    }];
+    const functionDeclarations = allowedTools.map(tool => {
+        let parameters: any = { type: Type.OBJECT, properties: {}, required: [] };
+        if (tool.id === 'sherlock-maigret') {
+            parameters.properties.username = { type: Type.STRING, description: "The username to search for across social media." };
+            parameters.required.push('username');
+        }
+        if (tool.id === 'spiderfoot') {
+             parameters.properties.target = { type: Type.STRING, description: "The target to scan (domain, IP address, or email)." };
+             parameters.required.push('target');
+        }
+
+        return {
+            name: tool.id,
+            description: tool.description,
+            parameters: parameters
+        };
+    }).filter(fd => Object.keys(fd.parameters.properties).length > 0);
+
+    if (functionDeclarations.length === 0) return undefined;
+
+    return [{ functionDeclarations }];
   });
+
 
   constructor() {
     this.startNewChat();
@@ -138,90 +142,78 @@ export class AiCoreComponent {
     if (!this.currentInput().trim() || this.isGenerating()) return;
 
     const userText = this.currentInput();
-    this.currentInput.set(''); // Clear input
-    
-    // 1. Add User Message
+    this.currentInput.set('');
+
     this.addMessage(userText, 'user');
     this.isGenerating.set(true);
 
     try {
-      const history: Content[] = this.messages()
-        .filter(m => m.from !== 'system' && !m.isError) // Clean context
-        .map(msg => ({
-          role: msg.from === 'user' ? 'user' : 'model',
-          parts: [{ text: msg.text }]
-        }));
+        let history: Content[] = this.messages()
+            .filter(m => m.from !== 'system' && !m.isError)
+            .map(msg => ({
+                role: msg.from === 'user' ? 'user' : 'model',
+                parts: [{ text: msg.text }]
+            }));
 
-      // 2. Call Gemini
-      const response = await this.geminiService.getChatResponse(
-        history, 
-        userText, 
-        this.geminiTools()
-      );
+        // Initial call to Gemini
+        const initialResponse = await this.geminiService.getChatResponse(history.slice(0, -1), userText, this.geminiTools());
+        
+        const functionCallParts = initialResponse.candidates?.[0]?.content?.parts?.filter(p => !!p.functionCall);
+        const functionCall = functionCallParts?.[0]?.functionCall;
 
-      // 3. Handle Tool Calls (MCP)
-      const functionCallParts = response.candidates?.[0]?.content?.parts?.filter(p => !!p.functionCall);
-      
-      if (functionCallParts && functionCallParts.length > 0) {
-        for (const part of functionCallParts) {
-          const call = part.functionCall;
-          if (call && call.name === 'run_tool') {
-            const { toolId } = call.args as any;
-            this.handleToolExecution(toolId);
-          }
+        if (functionCall) {
+            // --- Tool Execution Flow ---
+            const toolId = functionCall.name;
+            const args = functionCall.args;
+
+            this.addMessage(`جارٍ استخدام أداة: ${toolId}...`, 'system', false, toolId);
+            
+            const modelTurn: Content = { role: 'model', parts: [{ functionCall }] };
+            
+            try {
+                const toolResult = await firstValueFrom(this.geminiService.executeTool(toolId, args));
+                
+                const toolResponsePart: Part = {
+                    functionResponse: { name: toolId, response: { output: toolResult.output } }
+                };
+                
+                const historyForNextCall: Content[] = [...history, modelTurn, { role: 'user', parts: [toolResponsePart] }];
+                
+                const finalResponse = await this.geminiService.getChatResponse(historyForNextCall, '');
+                this.addMessage(finalResponse.text, 'ai');
+
+            } catch (toolError: any) {
+                const errorMessage = toolError?.error?.error || toolError.message || 'فشل تشغيل الأداة.';
+                this.addMessage(`خطأ أثناء تشغيل أداة ${toolId}: ${errorMessage}`, 'ai', true);
+            }
+
+        } else {
+            // --- Simple Text Response Flow ---
+            const responseText = initialResponse.text;
+            if (responseText) {
+                this.addMessage(responseText, 'ai');
+            } else {
+                 this.addMessage('عذراً، لم أتمكن من معالجة الطلب. يرجى المحاولة مرة أخرى.', 'ai', true);
+            }
         }
-      }
-
-      // 4. Handle Text Response
-      const responseText = response.text;
-      if (responseText) {
-        this.addMessage(responseText, 'ai');
-      } else if (!functionCallParts?.length) {
-         this.addMessage('عذراً، لم أتمكن من معالجة الطلب. يرجى المحاولة مرة أخرى.', 'ai', true);
-      }
 
     } catch (error) {
-      console.error(error);
-      this.addMessage('حدث خطأ في الاتصال بالشبكة العصبية.', 'ai', true);
+        console.error(error);
+        const errorMessage = error instanceof Error ? error.message : 'حدث خطأ في الاتصال بالشبكة العصبية.';
+        this.addMessage(errorMessage, 'ai', true);
     } finally {
-      this.isGenerating.set(false);
+        this.isGenerating.set(false);
     }
   }
 
-  private handleToolExecution(toolId: string) {
-    const tool = this.toolService.tools().find(t => t.id === toolId);
-    if (tool) {
-      // System feedback
-      this.messages.update(msgs => [...msgs, {
-        id: Date.now(),
-        text: `جارٍ تشغيل أداة: ${tool.name}...`,
-        from: 'system',
-        toolUsed: tool.name,
-        timestamp: new Date()
-      }]);
-      
-      // Execute
-      setTimeout(() => {
-        this.toolStateService.runTool(toolId);
-      }, 800); // Slight delay for UX
-      
-      // Audit Log
-      this.logger.logEvent(
-        'AI Agent Action',
-        `AI activated tool: ${tool.name}`,
-        this.user()?.name,
-        false
-      );
-    }
-  }
-
-  private addMessage(text: string, from: 'user' | 'ai' | 'system', isError = false) {
+  private addMessage(text: string, from: 'user' | 'ai' | 'system', isError = false, toolUsed?: string) {
     this.messages.update(msgs => [...msgs, {
       id: Date.now(),
       text,
       from,
       timestamp: new Date(),
-      isError
+      isError,
+      toolUsed
     }]);
   }
 

@@ -1,5 +1,6 @@
 
 
+
 import { Component, ChangeDetectionStrategy, signal, effect, Renderer2, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -75,7 +76,7 @@ import { TrialService } from './services/trial.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  templateUrl: 'src/app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
@@ -122,7 +123,7 @@ import { TrialService } from './services/trial.service';
     ForensicLabComponent,
     ErpComponent,
     DastoorMeterComponent,
-    // New Public Portal Pages
+    // New public portal pages
     ViolationsObservatoryPublicComponent,
     NewsPublicComponent,
     ProjectsPublicComponent,

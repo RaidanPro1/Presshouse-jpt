@@ -1,4 +1,6 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { GoogleGenAI, Content, GenerateContentResponse, Part, Tool as GeminiTool, Type, GenerateContentParameters } from '@google/genai';
 import { SettingsService } from './settings.service';
 import { TranslationService } from './translation.service'; // Import translation service
@@ -9,6 +11,8 @@ const simulateDelay = (ms: number) => new Promise(res => setTimeout(res, ms));
   providedIn: 'root',
 })
 export class GeminiService {
+  // FIX: Explicitly type `http` as `HttpClient` to resolve type inference issue.
+  private http: HttpClient = inject(HttpClient);
   private settingsService = inject(SettingsService);
   private translationService = inject(TranslationService); // Inject it
   private ai: GoogleGenAI | null = null;
@@ -50,7 +54,7 @@ export class GeminiService {
     if (lowerMessage.includes('مرحبا') || lowerMessage.includes('أهلا')) {
       text = 'أهلاً بك! أنا نموذج الذكاء الاصطناعي المحلي. كيف يمكنني خدمتك اليوم؟';
     } else {
-      text = `هذا رد محلي تمت محاكاته بخصوص: "${newMessage}". في نظام حقيقي، سأقوم بتحليل هذا الطلب بعمق.`;
+      text = `هذا رد محلي تمت محاكاته بخصوص: "${newMessage}". في نظام حقيقي, سأقوم بتحليل هذا الطلب بعمق.`;
     }
     // Mock the response structure
     return {
@@ -81,12 +85,16 @@ export class GeminiService {
     if (!ai) {
       return {
         text: this.translationService.translate('gemini_not_configured'),
-        functionCalls: () => undefined
+        candidates: []
       } as unknown as GenerateContentResponse;
     }
 
     try {
-      const contents: Content[] = [...history, { role: 'user', parts: [{ text: newMessage }] }];
+      const contents: Content[] = [...history];
+      if(newMessage) {
+        contents.push({ role: 'user', parts: [{ text: newMessage }] });
+      }
+
       const response: GenerateContentResponse = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
         contents,
@@ -205,5 +213,16 @@ export class GeminiService {
       console.error("Gemini structured response error:", e);
       throw new Error(this.translationService.translate('gemini_error'));
     }
+  }
+
+  /**
+   * Executes a tool via the secure MCP server.
+   * @param toolId The unique ID of the tool to run.
+   * @param args The arguments to pass to the tool.
+   * @returns An observable with the tool's string output.
+   */
+  executeTool(toolId: string, args: any): Observable<{ output: string }> {
+    const endpoint = '/api/mcp/execute'; // Proxied through the backend
+    return this.http.post<{ output: string }>(endpoint, { toolId, args });
   }
 }

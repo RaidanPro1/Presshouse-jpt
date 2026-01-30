@@ -105,6 +105,16 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
+  
+  mcp-server:
+    build:
+      context: ./mcp-server
+    container_name: mcp-server
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - raidan_net
 
   label-studio:
     image: heartexlabs/label-studio:latest

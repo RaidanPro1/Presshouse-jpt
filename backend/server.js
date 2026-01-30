@@ -1,9 +1,9 @@
-
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const TelegramBot = require('node-telegram-bot-api');
 const { exec } = require('child_process');
+const fetch = require('node-fetch');
 
 // --- Telegram Bot Setup ---
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -116,7 +116,8 @@ app.post('/api/service/:action', (req, res) => {
       'ph-changedetection', 'ph-archivebox', 'ph-meedan-check', 
       'ph-languagetool', 'ph-forensics', 'ph-nocodb', 'ph-internal-proxy',
       'yemenjpt_app', 'ph-label-studio', 'ph-azuracast', 'ph-ghost',
-      'ph-posteio', 'ph-restreamer', 'ph-mixpost', 'ph-mongodb', 'ph-evolution-api'
+      'ph-posteio', 'ph-restreamer', 'ph-mixpost', 'ph-mongodb', 'ph-evolution-api',
+      'mcp-server' // MCP Server is now a manageable service
     ];
 
     if (!allowedActions.includes(action)) {
@@ -140,6 +141,26 @@ app.post('/api/service/:action', (req, res) => {
         }
         res.status(200).json({ message: `Service ${sanitizedServiceName} ${sanitizedAction}ed successfully.`, output: stdout });
     });
+});
+
+// MCP Server Proxy Endpoint
+app.post('/api/mcp/execute', async (req, res) => {
+    const mcpServerUrl = 'http://mcp-server:4000/execute';
+    console.log(`Forwarding request to MCP server: ${mcpServerUrl}`);
+
+    try {
+        const response = await fetch(mcpServerUrl, {
+            method: 'POST',
+            body: JSON.stringify(req.body),
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const data = await response.json();
+        res.status(response.status).json(data);
+    } catch (error) {
+        console.error('Error forwarding request to MCP server:', error);
+        res.status(502).json({ error: 'Bad Gateway', details: 'Could not connect to the MCP server.' });
+    }
 });
 
 
