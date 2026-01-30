@@ -1,0 +1,73 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">الخرائط والرصد الجغرافي</h1>
+    <p class="text-gray-500 mt-1">
+      لوحة تحكم متقدمة لتحليل البيانات الجغرافية المكانية باستخدام أدوات مثل Deck.gl, Kepler.gl, وخدمات الخرائط التفاعلية.
+    </p>
+  </div>
+  
+  <!-- Tabs -->
+  <div class="border-b border-gray-200">
+    <nav class="-mb-px flex space-i-6" aria-label="Tabs">
+      <button (click)="setTab('ushahidi')" [class]="activeTab() === 'ushahidi' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">
+        الرصد الميداني (Ushahidi)
+      </button>
+      <button (click)="setTab('kepler')" [class]="activeTab() === 'kepler' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">
+        تحليل البيانات (Kepler/Deck.gl)
+      </button>
+      <button (click)="setTab('earth-engine')" [class]="activeTab() === 'earth-engine' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">
+        صور الأقمار الصناعية (Earth Engine)
+      </button>
+      <button (click)="setTab('live')" [class]="activeTab() === 'live' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">
+        الخريطة الحية (Map GL)
+      </button>
+    </nav>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="bg-base-100 p-4 rounded-xl shadow min-h-[400px]">
+    @switch (activeTab()) {
+      @case ('ushahidi') {
+        <div class="flex flex-col items-center justify-center h-full text-center">
+          <h2 class="text-2xl font-bold text-gray-800">خريطة الرصد الميداني</h2>
+          <p class="text-gray-500 mt-2 mb-4">عرض البلاغات والتقارير الميدانية المجمعة عبر منصة Ushahidi.</p>
+          <img src="assets/images/violations/map-placeholder.jpg" alt="Ushahidi Crowdsourced Map" class="rounded-lg object-cover w-full h-64 opacity-80 shadow-inner">
+        </div>
+      }
+      @case ('kepler') {
+        <div class="flex flex-col items-center justify-center h-full text-center">
+          <h2 class="text-2xl font-bold text-gray-800">تصور البيانات الضخمة مع Kepler/Deck.gl</h2>
+          <p class="text-gray-500 mt-2 mb-4">تحليل مجموعات البيانات الجغرافية الكبيرة للكشف عن الأنماط المخفية.</p>
+          <img src="assets/images/violations/map-placeholder.jpg" alt="Kepler.gl and Deck.gl data visualization" class="rounded-lg object-cover w-full h-64 opacity-80 shadow-inner">
+        </div>
+      }
+      @case ('earth-engine') {
+        <div class="flex flex-col items-center justify-center h-full text-center">
+          <h2 class="text-2xl font-bold text-gray-800">تحليل صور الأقمار الصناعية</h2>
+          <p class="text-gray-500 mt-2 mb-4">استخدام Google Earth Engine لرصد التغيرات على الأرض بمرور الوقت.</p>
+          <img src="assets/images/violations/map-placeholder.jpg" alt="Google Earth Engine satellite analysis" class="rounded-lg object-cover w-full h-64 opacity-80 shadow-inner">
+        </div>
+      }
+      @case ('live') {
+        <div class="flex flex-col items-center justify-center h-full text-center">
+          <h2 class="text-2xl font-bold text-gray-800">الخريطة التفاعلية الحية</h2>
+          <p class="text-gray-500 mt-2 mb-4">عرض البيانات الحية مثل حركة المرور والحوادث المبلغ عنها باستخدام Map GL أو Google Maps.</p>
+          <img src="assets/images/violations/map-placeholder.jpg" alt="Live interactive map with React Map GL or Google Maps" class="rounded-lg object-cover w-full h-64 opacity-80 shadow-inner">
+        </div>
+      }
+    }
+  </div>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">الأدوات والتطبيقات ذات الصلة</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (tool of mapTools(); track tool.id) {
+        <app-tool-card 
+          [tool]="tool" 
+          [userRole]="user()?.role ?? 'guest'"
+          (toggleStatus)="handleToolToggle($event)"
+          (toggleFavorite)="handleToggleFavorite($event)"></app-tool-card>
+      }
+    </div>
+  </section>
+</div>

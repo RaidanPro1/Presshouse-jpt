@@ -1,0 +1,51 @@
+
+<aside class="w-20 bg-base-100 border-e border-gray-200 flex flex-col items-center py-4 space-y-4">
+  <!-- Logo -->
+  <a href="javascript:void(0)" (click)="onNavigate('dashboard')" class="block" title="Dashboard Home">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-gray-500">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 21v-1.5M15.75 3v1.5m0 15v-1.5M12 4.5v-1.5m0 18v-1.5" />
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 7.5h16.5v9H3.75v-9Z" />
+    </svg>
+  </a>
+
+  <!-- Navigation -->
+  <nav class="flex-grow w-full flex flex-col items-center space-y-2">
+    @for(link of navLinks(); track link.key) {
+      <a 
+        href="javascript:void(0)" 
+        (click)="onNavigate(link.key)"
+        [title]="link.name"
+        class="relative w-12 h-12 flex items-center justify-center rounded-lg group transition-colors"
+        [class]="isLinkActive(link.key) ? 'bg-ph-blue text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-ph-blue'">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+           @switch (link.icon) {
+            @case ('home-role-icon') { 
+              @switch (userService.currentUser()?.role) {
+                @case ('investigative-journalist') { <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 3.75V16.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 16.5V3.75m12 0a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 3.75m12 0v1.5a2.25 2.25 0 0 1-2.25 2.25H6.75a2.25 2.25 0 0 1-2.25-2.25V3.75" /> }
+                @case ('editor-in-chief') { <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M12 15v5.25A2.25 2.25 0 0 0 14.25 22.5h5.25a2.25 2.25 0 0 0 2.25-2.25V15M12 15H9.75a2.25 2.25 0 0 1-2.25-2.25V5.25A2.25 2.25 0 0 1 9.75 3h5.25a2.25 2.25 0 0 1 2.25 2.25V15" /> }
+                @case ('super-admin') { <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 7.5 3 11.25l3.75 3.75M17.25 7.5 21 11.25l-3.75 3.75M13.5 19.5 10.5 4.5" /> }
+              }
+            }
+            @case ('squares-2x2') { <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 8.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" /> }
+            @case ('sparkles') { <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09ZM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456Z" /> }
+            @case ('beaker') { <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 5.25a3 3 0 0 1 3 3v1.5a3 3 0 0 0 3 3h-15a3 3 0 0 0 3-3v-1.5a3 3 0 0 1 3-3h.75Z M14.25 5.25A3.75 3.75 0 0 0 10.5 1.5h-1.5A3.75 3.75 0 0 0 5.25 5.25m9 0c.328 0 .653.033.971.098a2.25 2.25 0 0 1 2.052 2.221v.005a2.25 2.25 0 0 1-2.221 2.052c-.318.065-.643.098-.971.098m-9 0c-.328 0-.653-.033-.971-.098a2.25 2.25 0 0 0-2.052-2.221v-.005a2.25 2.25 0 0 0 2.221-2.052c.318-.065.643-.098.971-.098m9 0h-9" /> }
+            @case ('users') { <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-4.683c.65-.935 1-2.104 1-3.328M3 4.5a5.25 5.25 0 0 1 10.5 0v.75a5.25 5.25 0 0 1-10.5 0v-.75Z" /> }
+            @case ('shield-check') { <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286Zm0 13.036h.008v.008h-.008v-.008Z" /> }
+            @case ('chart-bar') { <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /> }
+            @case ('cog-6-tooth') { <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-1.003 1.11-1.226a11.989 11.989 0 0 1 2.59 0c.55.223 1.02.684 1.11 1.226.09.542-.055 1.14-.422 1.567l-.025.025a1.5 1.5 0 0 0-.232 1.06V8.25c0 .532.22 1.02.585 1.35l.025.025c.367.427.512 1.025.422 1.567-.09.542-.56 1.003-1.11 1.226a11.99 11.99 0 0 1-2.59 0c-.55-.223-1.02-.684-1.11-1.226-.09-.542.055-1.14.422-1.567l.025-.025a1.5 1.5 0 0 0 .232-1.06V8.25a1.5 1.5 0 0 0-.232-1.06l-.025-.025a1.722 1.722 0 0 1-.422-1.567ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z" /> }
+            @case ('scale') { <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0 0 12 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 0 1-2.031.352 5.988 5.988 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971Zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 0 1-2.031.352 5.989 5.989 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971Z" /> }
+            @case ('presentation-chart-bar') { <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 0 0 6 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0 1 18 16.5h-2.25m-7.5 0h7.5m-7.5 0-1 1.083-1.558 1.685-1.558 1.686M8.25 16.5l1-1.083 1.558-1.685 1.558-1.686m0 4.455 1 1.083 1.558 1.685 1.558 1.686M15.75 16.5l-1-1.083-1.558-1.685-1.558-1.686M9 21h6" /> }
+          }
+        </svg>
+
+        <span class="absolute start-full ms-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 pointer-events-none whitespace-nowrap z-50">
+          {{ link.name }}
+        </span>
+      </a>
+    }
+  </nav>
+
+  <!-- Spacer to push settings to the bottom -->
+  <div class="mt-auto"></div>
+</aside>

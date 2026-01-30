@@ -1,0 +1,52 @@
+
+<div class="relative min-h-screen flex bg-base-200 text-gray-800 font-sans">
+  <!-- Navigation Rail -->
+  <app-nav-rail
+    [activePage]="currentPage()"
+    (navigate)="onNavigate($event)">
+  </app-nav-rail>
+
+  <!-- Main content -->
+  <div class="flex flex-col flex-1 min-h-screen">
+    <!-- Header -->
+    <app-header 
+      [isAuthenticated]="true"
+      [user]="user()"
+      (logout)="onLogout()"
+      (navigate)="onNavigate($event)"></app-header>
+    
+    <!-- Page Content -->
+    <main class="p-4 md:p-8 flex-1">
+      @switch (currentPage()) {
+        @case ('dashboard') { <app-dashboard (navigate)="onNavigate($event)"></app-dashboard> }
+        @case ('workspace') { <app-journalist-workspace (navigate)="onNavigate($event)"></app-journalist-workspace> }
+        @case ('editorial') { <app-editorial-hub></app-editorial-hub> }
+        @case ('command-center') { <app-command-center></app-command-center> }
+        @case ('newsroom') { <app-newsroom></app-newsroom> }
+        @case ('ai-core') { <app-ai-core></app-ai-core> }
+        @case ('forensic-lab') { <app-forensic-lab></app-forensic-lab> }
+        @case ('social-media') { <app-social-media-analysis></app-social-media-analysis> }
+        @case ('collaboration') { <app-collaboration></app-collaboration> }
+        @case ('admin') { <app-admin></app-admin> }
+        @case ('indilab') { <app-indilab></app-indilab> }
+        @case ('maps') { <app-maps></app-maps> }
+        @case ('archiving') { <app-archiving></app-archiving> }
+        @case ('users') { <app-user-management (navigate)="onNavigate($event)"></app-user-management> }
+        @case ('settings') { <app-settings></app-settings> }
+        @case ('automation') { <app-automation></app-automation> }
+        @case ('profile') { <app-profile></app-profile> }
+        @case ('system-internals') { <app-system-internals></app-system-internals> }
+        @case ('crm') { <app-crm></app-crm> }
+        @case ('erp') { <app-erp></app-erp> }
+        @case ('dastoor-meter') { <app-dastoor-meter></app-dastoor-meter> }
+        @case ('privacy-policy') { <app-privacy-policy (navigate)="onNavigate($event)"></app-privacy-policy> }
+        @case ('terms-of-service') { <app-terms-of-service (navigate)="onNavigate($event)"></app-terms-of-service> }
+        @case ('cookie-policy') { <app-cookie-policy></app-cookie-policy> }
+        @case ('disclaimer') { <app-disclaimer></app-disclaimer> }
+        @case ('project-management') { <app-project-management-portal></app-project-management-portal> }
+        @case ('violations-observatory') { <app-violations-observatory></app-violations-observatory> }
+        @default { <app-placeholder [pageTitle]="currentPage()"></app-placeholder> }
+      }
+    </main>
+  </div>
+</div>

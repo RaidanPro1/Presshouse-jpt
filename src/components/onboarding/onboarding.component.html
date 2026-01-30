@@ -1,0 +1,92 @@
+<div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center animate-fade-in">
+  <div class="bg-base-100 rounded-2xl shadow-xl w-full max-w-2xl p-8 m-4 transform transition-all" (click)="$event.stopPropagation()">
+    @switch (currentStep()) {
+      @case (1) {
+        <div class="text-center">
+          <img src="assets/logo.png" alt="Press House Logo" class="h-20 mx-auto mb-4">
+          <h2 class="text-3xl font-bold text-ph-blue">أهلاً بك في منصة YemenJPT</h2>
+          <p class="mt-4 text-lg text-gray-600">
+            هذه جولة سريعة لمساعدتك على البدء واستكشاف أقوى الميزات في مساحة عملك الجديدة.
+          </p>
+          <p class="mt-2 text-gray-500">جاهز؟ لنبدأ!</p>
+        </div>
+      }
+      @case (2) {
+        <div>
+          <h3 class="text-2xl font-bold text-ph-blue mb-4">القائمة الجانبية: بوصلتك</h3>
+          <p class="text-gray-600 mb-4">
+            هنا يمكنك التنقل بين الأقسام الرئيسية للمنصة. كل قسم مصمم لمرحلة معينة من عملك الاستقصائي.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <li><span class="font-bold">لوحة التحكم:</span> نقطة انطلاقك ومستودع أدواتك.</li>
+            <li><span class="font-bold">النواة المعرفية:</span> مركز الذكاء الاصطناعي لتحليل النصوص والصور.</li>
+            <li><span class="font-bold">مساحة العمل:</span> للتعاون مع فريقك وإدارة المشاريع.</li>
+          </ul>
+        </div>
+      }
+      @case (3) {
+        <div>
+          <h3 class="text-2xl font-bold text-ph-blue mb-4">لوحة التحكم: ترسانتك الرقمية</h3>
+          <p class="text-gray-600 mb-4">
+            تحتوي لوحة التحكم على جميع الأدوات المتخصصة التي تحتاجها، مقسمة حسب الفئة.
+          </p>
+          <div class="p-4 bg-base-200 rounded-lg">
+            <p class="font-semibold">✨ نصيحة احترافية:</p>
+            <p class="text-sm">انقر على أيقونة النجمة ⭐ بجانب أي أداة لإضافتها إلى "أدواتي المفضلة" لسهولة الوصول إليها في المرة القادمة.</p>
+          </div>
+        </div>
+      }
+      @case (4) {
+        <div>
+          <h3 class="text-2xl font-bold text-ph-blue mb-4">مساحة العمل: قلب التعاون</h3>
+          <p class="text-gray-600 mb-4">
+            هذا هو المكان الذي تجتمع فيه المشاريع. يمكنك إنشاء مشاريع جديدة، دعوة أعضاء الفريق، وإدارة المهام.
+          </p>
+          <ul class="list-disc list-inside space-y-2 text-gray-700">
+            <li>استخدم لوحات المهام (Kanban) لتتبع التقدم.</li>
+            <li>ناقش الأفكار مع فريقك في تبويب "النقاشات".</li>
+            <li>ابدأ "اجتماع مباشر" بالفيديو للتواصل الفوري.</li>
+          </ul>
+        </div>
+      }
+      @case (5) {
+        <div class="text-center">
+           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto text-green-500 mb-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          <h2 class="text-3xl font-bold text-ph-blue">أنت الآن جاهز!</h2>
+          <p class="mt-4 text-lg text-gray-600">
+            لقد أكملت الجولة التعريفية. حان الوقت لبدء تحقيقك القادم.
+          </p>
+          <p class="mt-2 text-gray-500">نتمنى لك التوفيق في مهمتك لكشف الحقيقة.</p>
+        </div>
+      }
+    }
+
+    <!-- Navigation -->
+    <div class="mt-8 flex justify-between items-center">
+      @if (currentStep() < 5) {
+        <button (click)="finishOnboarding()" class="text-sm text-gray-500 hover:underline">تخطي</button>
+      } @else {
+        <div></div> <!-- Spacer -->
+      }
+      
+      <div class="flex items-center gap-3">
+        @if (currentStep() > 1) {
+          <button (click)="prevStep()" class="px-4 py-2 text-sm font-medium rounded-lg bg-gray-200 hover:bg-gray-300">
+            السابق
+          </button>
+        }
+        @if (currentStep() < 5) {
+          <button (click)="nextStep()" class="px-4 py-2 text-sm font-medium text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark">
+            التالي
+          </button>
+        } @else {
+          <button (click)="finishOnboarding()" class="px-6 py-2 font-bold text-white rounded-lg bg-green-600 hover:bg-green-700">
+            إنهاء وبدء العمل
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

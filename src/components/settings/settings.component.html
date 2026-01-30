@@ -1,0 +1,54 @@
+<div class="bg-base-100 p-6 rounded-xl shadow h-full flex flex-col animate-fade-in">
+  <div class="flex-shrink-0">
+    <h1 class="text-3xl font-bold text-gray-900">الإعدادات</h1>
+    <p class="text-gray-500 mb-6">إدارة ملفك الشخصي، تفضيلات الإشعارات، واشتراكاتك البريدية.</p>
+  </div>
+
+  <div class="flex-grow overflow-y-auto pr-4 space-y-8">
+    
+    <!-- Profile Settings -->
+    <section id="profile-settings" class="p-6 border rounded-lg">
+      <h2 class="text-xl font-bold mb-4">إعدادات الملف الشخصي</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label for="full_name" class="block mb-2 text-sm font-medium text-gray-900">الاسم الكامل</label>
+          <input type="text" id="full_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-ph-blue focus:border-ph-blue block w-full p-2.5" value="Raidan Al-Huraibi">
+        </div>
+        <div>
+          <label for="email" class="block mb-2 text-sm font-medium text-gray-900">البريد الإلكتروني</label>
+          <input type="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-ph-blue focus:border-ph-blue block w-full p-2.5" value="raidan@ph-ye.org">
+        </div>
+        <div>
+           <label for="avatar-upload" class="block mb-2 text-sm font-medium text-gray-900">الصورة الرمزية</label>
+           <input type="file" id="avatar-upload" class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none">
+        </div>
+      </div>
+    </section>
+    
+    <!-- Notification Settings -->
+    <section id="notification-settings" class="p-6 border rounded-lg">
+      <h2 class="text-xl font-bold mb-4">تفضيلات الإشعارات</h2>
+      <div class="space-y-3">
+        <label class="flex items-center"><input type="checkbox" class="rounded text-ph-blue focus:ring-ph-blue" checked> <span class="ms-2">إشعارات داخل المنصة عند إضافة مهمة جديدة لك</span></label>
+        <label class="flex items-center"><input type="checkbox" class="rounded text-ph-blue focus:ring-ph-blue"> <span class="ms-2">ملخص يومي للنشاطات عبر البريد الإلكتروني</span></label>
+      </div>
+    </section>
+
+    <!-- Newsletter Subscriptions -->
+    <section id="newsletter-settings" class="p-6 border rounded-lg">
+      <h2 class="text-xl font-bold mb-4">النشرات البريدية</h2>
+      <div class="space-y-3">
+        <label class="flex items-center"><input type="checkbox" class="rounded text-ph-blue focus:ring-ph-blue" checked> <span class="ms-2">النشرة الإخبارية الأسبوعية لبيت الصحافة</span></label>
+        <label class="flex items-center"><input type="checkbox" class="rounded text-ph-blue focus:ring-ph-blue"> <span class="ms-2">تنبيهات أمنية عاجلة للصحفيين</span></label>
+        <label class="flex items-center"><input type="checkbox" class="rounded text-ph-blue focus:ring-ph-blue"> <span class="ms-2">إعلانات عن دورات تدريبية جديدة</span></label>
+      </div>
+    </section>
+
+    <div class="flex justify-end">
+      <button class="px-8 py-3 text-lg font-bold text-white rounded-lg transition-transform hover:scale-105 bg-ph-blue hover:bg-ph-blue-dark">
+        حفظ التغييرات
+      </button>
+    </div>
+
+  </div>
+</div>

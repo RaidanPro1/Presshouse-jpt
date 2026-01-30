@@ -1,0 +1,42 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">تحليل الإعلام الاجتماعي</h1>
+    <p class="text-gray-700 mt-1">
+      مساحة عمل متخصصة لجمع وتحليل البيانات من منصات التواصل الاجتماعي لكشف التوجهات والشبكات.
+    </p>
+  </div>
+
+  <!-- Analysis Input Section -->
+  <section class="bg-base-100 p-6 rounded-xl shadow">
+    <h2 class="text-xl font-bold mb-4">بدء تحليل جديد</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+        <div>
+            <label for="topic" class="block mb-2 text-sm font-medium">الموضوع أو الكلمات المفتاحية</label>
+            <input type="text" id="topic" class="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50" placeholder="مثال: انقطاع الإنترنت في عدن">
+        </div>
+        <div>
+            <label for="username" class="block mb-2 text-sm font-medium">اسم المستخدم أو الحساب</label>
+            <input type="text" id="username" class="w-full p-2.5 rounded-lg border border-gray-300 bg-gray-50" placeholder="مثال: @username">
+        </div>
+    </div>
+    <div class="mt-4 text-center">
+        <button class="px-6 py-2.5 font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark shadow hover:shadow-md transform hover:-translate-y-px transition-all">
+            جمع البيانات
+        </button>
+    </div>
+  </section>
+
+  <!-- Tools Section -->
+  <section>
+    <h2 class="text-xl font-bold mb-4">أدوات التحليل المتاحة</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (tool of socialTools(); track tool.id) {
+        <app-tool-card 
+          [tool]="tool" 
+          [userRole]="user()?.role ?? 'guest'"
+          (toggleStatus)="handleToolToggle($event)"
+          (toggleFavorite)="handleToggleFavorite($event)"></app-tool-card>
+      }
+    </div>
+  </section>
+</div>

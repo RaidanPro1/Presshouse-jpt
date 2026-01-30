@@ -1,0 +1,49 @@
+# dashy-journalist.yml - لوحة تحكم الصحفي (V18.0)
+pageInfo:
+  title: YemenJPT Portal
+  description: Your daily toolkit for investigation and reporting
+  logo: https://i.ibb.co/L9wY6h1/ai-chip-logo.png
+sections:
+  - name: Core Workflow
+    icon: fas fa-pen-nib
+    items:
+      - title: AI Assistant
+        description: YemenJPT for research & analysis
+        icon: hl-robot
+        url: "https://ai-ui.${DOMAIN}"
+      - title: Secure Search
+        description: Private meta-search with SearXNG
+        icon: hl-search
+        url: "https://search.${DOMAIN}"
+      - title: Secure Browser
+        description: Isolated browser for risky websites (Webtop)
+        icon: fas fa-window-maximize
+        url: "https://browser.${DOMAIN}"
+      - title: Team Chat
+        description: Mattermost for team collaboration
+        icon: hl-comments
+        url: "https://chat.${DOMAIN}"
+      - title: Secure Files
+        description: Nextcloud for file storage and sharing
+        icon: "fas fa-cloud"
+        url: "https://files.${DOMAIN}"
+      - title: Secure Translation
+        description: Self-hosted LibreTranslate
+        icon: fas fa-language
+        url: "https://translate.${DOMAIN}"
+  
+  - name: Essential Tools
+    icon: fas fa-tools
+    items:
+      - title: Web Archive
+        description: Save permanent copies of webpages
+        icon: hl-archive-box
+        url: "https://archive.${DOMAIN}"
+      - title: Password Manager
+        description: Access your secure password vault
+        icon: hl-key
+        url: "https://pass.${DOMAIN}"
+      - title: Website Monitoring
+        description: Track changes on any website
+        icon: hl-eye
+        url: "https://watch.${DOMAIN}"

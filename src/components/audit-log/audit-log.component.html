@@ -1,0 +1,31 @@
+<section class="bg-base-100 p-6 rounded-xl shadow">
+  <h2 class="text-xl font-bold text-gray-900 mb-4">سجل تدقيق النظام</h2>
+  <div class="overflow-x-auto max-h-[70vh]">
+    <table class="w-full text-sm text-right text-gray-600">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
+        <tr>
+          <th class="py-3 px-6">الوقت</th>
+          <th class="py-3 px-6">المستخدم</th>
+          <th class="py-3 px-6">الحدث</th>
+          <th class="py-3 px-6">التفاصيل</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        @for(log of logs(); track log.timestamp) {
+          <tr class="hover:bg-gray-50" [class.bg-red-50]="log.isRoot">
+            <td class="py-3 px-6 font-mono text-xs">{{ log.timestamp.toLocaleTimeString() }}</td>
+            <td class="py-3 px-6 font-semibold">{{ log.user }}</td>
+            <td class="py-3 px-6">
+                <span class="font-bold" [class.text-red-600]="log.isRoot">{{ log.event }}</span>
+            </td>
+            <td class="py-3 px-6">{{ log.details }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="text-center p-4">لا توجد سجلات لعرضها.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

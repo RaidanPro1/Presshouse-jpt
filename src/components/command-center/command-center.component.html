@@ -1,0 +1,143 @@
+<div class="flex flex-col md:flex-row gap-8">
+
+  <!-- Sidebar Navigation -->
+  <aside class="w-full md:w-64 flex-shrink-0 bg-base-100 p-4 rounded-xl shadow-lg">
+    <h2 class="text-xl font-bold mb-4 border-b pb-2">لوحة القيادة</h2>
+    <nav class="space-y-2">
+      @for (link of visibleLinks(); track link.key) {
+        <button 
+          (click)="setView(link.key)"
+          class="w-full flex items-center p-3 rounded-lg text-sm font-semibold transition-colors"
+          [class]="activeView() === link.key ? 'bg-ph-blue text-white' : 'text-gray-700 hover:bg-gray-100'">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 me-3">
+            <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="link.icon" />
+          </svg>
+          {{ link.name }}
+        </button>
+      }
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="flex-grow min-w-0">
+    @switch (activeView()) {
+      @case ('overview') {
+        <div class="space-y-8 animate-fade-in">
+          <!-- Header -->
+          <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 class="text-3xl md:text-4xl font-extrabold text-ph-blue">نظرة عامة على النظام</h1>
+              <p class="mt-2 text-lg text-gray-600">نظرة شاملة ولحظية على عمليات وأداء المنصة.</p>
+            </div>
+            <div class="flex items-center gap-2 p-2 bg-green-100 text-green-700 rounded-lg">
+              <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+              </span>
+              <span class="font-semibold">جميع الأنظمة تعمل</span>
+            </div>
+          </header>
+
+          <!-- System Health Dashboard -->
+          <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            @for(metric of systemMetrics(); track metric.name) {
+              <div class="bg-base-100 p-6 rounded-xl shadow-lg">
+                <h3 class="font-bold text-gray-800">{{ metric.name }}</h3>
+                <p class="text-4xl font-bold my-2">{{ metric.value.toFixed(0) }}<span class="text-xl">{{ metric.unit }}</span></p>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="h-3 rounded-full transition-all duration-500" [class]="metric.color" [style.width.%]="metric.value"></div>
+                </div>
+              </div>
+            }
+          </section>
+
+          <!-- Main Grid: Cost & Service Management -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Cost & Tokenomics -->
+            <section class="bg-base-100 p-6 rounded-xl shadow-lg">
+               <h2 class="text-2xl font-bold text-gray-800 mb-4">التكاليف واستهلاك التوكن</h2>
+               <div class="space-y-4">
+                  <div>
+                    <h4 class="font-semibold">الاستهلاك اليومي (مقابل الميزانية)</h4>
+                    <p class="text-sm text-gray-500">
+                      ${{ (costData().gemini.daily + costData().local.daily).toFixed(2) }} / ${{ costData().dailyBudget.toFixed(2) }}
+                    </p>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mt-1">
+                      <div class="bg-red-500 h-4 rounded-full" [style.width.%]="dailySpendPercentage()"></div>
+                    </div>
+                  </div>
+                   <div>
+                    <h4 class="font-semibold">الاستهلاك الشهري</h4>
+                     <div class="flex justify-between items-end mt-2">
+                        <div class="text-center w-1/2 px-2">
+                          <div class="h-32 bg-blue-400 rounded-t-lg" [style.height.px]="(costData().gemini.monthly / 1000) * 100"></div>
+                          <p class="text-xs font-bold mt-1">Gemini API</p>
+                          <p class="text-xs">${{ costData().gemini.monthly }}</p>
+                        </div>
+                         <div class="text-center w-1/2 px-2">
+                          <div class="h-12 bg-green-400 rounded-t-lg" [style.height.px]="(costData().local.monthly / 1000) * 100"></div>
+                          <p class="text-xs font-bold mt-1">Local Compute</p>
+                          <p class="text-xs">${{ costData().local.monthly }}</p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </section>
+
+            <!-- Service Management Panel -->
+            <aside class="bg-base-100 p-6 rounded-xl shadow-lg flex flex-col">
+              <h2 class="text-2xl font-bold text-gray-800 mb-4">مصفوفة صحة الخدمات</h2>
+              <div class="flex-grow overflow-y-auto pr-2 space-y-3">
+                @for(service of services(); track service.name) {
+                  <div class="bg-base-200 p-3 rounded-lg flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                      <span class="w-3 h-3 rounded-full" [ngClass]="{'bg-green-500': service.status === 'Online', 'bg-yellow-500': service.status === 'Degraded', 'bg-red-500': service.status === 'Offline', 'bg-blue-500 animate-pulse': service.status === 'Restarting'}"></span>
+                      <span class="font-semibold text-sm">{{ service.name }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <button (click)="viewLogs(service.name)" class="text-xs font-medium text-gray-500 hover:underline">Logs</button>
+                      <button (click)="restartService(service.name)" class="text-xs font-medium text-blue-600 hover:underline" [disabled]="service.status === 'Restarting'">Restart</button>
+                    </div>
+                  </div>
+                }
+              </div>
+            </aside>
+          </div>
+        </div>
+      }
+      @case ('security') {
+        <div class="animate-fade-in bg-base-100 p-6 rounded-xl shadow-lg h-full">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">مراقبة الأمان</h2>
+            <p class="text-gray-500">هنا يتم عرض سجلات الأمان، تنبيهات جدار الحماية، ومحاولات الدخول الفاشلة.</p>
+        </div>
+      }
+       @case ('ai_analytics') {
+        <div class="animate-fade-in bg-base-100 p-6 rounded-xl shadow-lg h-full">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">تحليلات الذكاء الاصطناعي</h2>
+            <p class="text-gray-500">رسوم بيانية توضح استخدام نماذج الذكاء الاصطناعي، متوسط وقت الاستجابة، ونسبة التقييمات الإيجابية.</p>
+        </div>
+      }
+       @case ('tasks') {
+        <div class="animate-fade-in bg-base-100 p-6 rounded-xl shadow-lg h-full">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">المهام الحرجة</h2>
+            <p class="text-gray-500">قائمة بالمهام ذات الأولوية القصوى التي تتطلب تدخلاً فورياً من الإدارة.</p>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+<!-- Logs Modal -->
+@if (showLogsModal()) {
+  <div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center animate-fade-in" (click)="closeLogsModal()">
+    <div class="bg-base-100 rounded-xl shadow-xl w-full max-w-3xl h-3/4 flex flex-col p-4 m-4" (click)="$event.stopPropagation()">
+      <div class="flex justify-between items-center pb-3 border-b">
+        <h3 class="font-bold text-xl">عرض السجلات</h3>
+        <button (click)="closeLogsModal()" class="p-1 rounded-full hover:bg-gray-200">&times;</button>
+      </div>
+      <div class="flex-grow bg-gray-900 text-white font-mono text-xs rounded-lg p-4 overflow-y-auto mt-4">
+        <pre>{{ logContent() }}</pre>
+      </div>
+    </div>
+  </div>
+}

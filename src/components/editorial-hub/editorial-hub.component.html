@@ -1,0 +1,104 @@
+<div class="h-full flex flex-col space-y-6 animate-fade-in">
+  <!-- Header -->
+  <header>
+    <h1 class="text-3xl font-bold text-gray-900">نظام غرفة الأخبار (Newsroom OS)</h1>
+    <p class="text-gray-500 mt-1">إدارة تدفق المحتوى من الفكرة إلى النشر باستخدام لوحة Kanban التفاعلية.</p>
+  </header>
+  
+  <!-- Kanban Board -->
+  <main class="flex-grow min-h-0">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 h-full">
+      
+      <!-- Ideas Column -->
+      <div 
+        (dragover)="onDragOver($event, 'ideas')" 
+        (dragleave)="onDragLeave()" 
+        (drop)="onDrop($event, 'ideas')" 
+        class="flex flex-col rounded-lg border-2 border-transparent transition-colors" 
+        [class.border-dashed]="dragOverStatus() === 'ideas'"
+        [class.border-blue-400]="dragOverStatus() === 'ideas'">
+        <h3 class="font-bold text-center p-3 rounded-t-lg text-blue-800 bg-blue-100 flex justify-between items-center">
+          <span>💡 الأفكار ({{ articles().ideas.length }})</span>
+          <button title="إضافة فكرة" class="p-1 rounded-full hover:bg-blue-200 text-lg">+</button>
+        </h3>
+        <div class="p-3 space-y-3 bg-blue-50 rounded-b-lg h-full overflow-y-auto">
+          @for (article of articles().ideas; track article.id) {
+            <div draggable="true" (dragstart)="onDragStart(article.id)" class="p-4 bg-white rounded-lg shadow-sm cursor-grab active:cursor-grabbing border-l-4 border-blue-400">
+              <p class="font-semibold text-sm">{{ article.title }}</p>
+              <div class="flex items-center justify-between mt-3">
+                 <span class="text-xs text-gray-500">{{ article.author }}</span>
+                 <img [src]="article.avatar" [alt]="article.author" class="w-6 h-6 rounded-full object-cover">
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- In Progress Column -->
+      <div 
+        (dragover)="onDragOver($event, 'inProgress')" 
+        (dragleave)="onDragLeave()" 
+        (drop)="onDrop($event, 'inProgress')" 
+        class="flex flex-col rounded-lg border-2 border-transparent transition-colors"
+        [class.border-dashed]="dragOverStatus() === 'inProgress'"
+        [class.border-yellow-400]="dragOverStatus() === 'inProgress'">
+        <h3 class="font-bold text-center p-3 rounded-t-lg text-yellow-800 bg-yellow-100 border-b-2 border-yellow-300">✍️ قيد التنفيذ ({{ articles().inProgress.length }})</h3>
+        <div class="p-3 space-y-3 bg-yellow-50 rounded-b-lg h-full overflow-y-auto">
+          @for (article of articles().inProgress; track article.id) {
+            <div draggable="true" (dragstart)="onDragStart(article.id)" class="p-4 bg-white rounded-lg shadow-sm cursor-grab active:cursor-grabbing border-l-4 border-yellow-400">
+              <p class="font-semibold text-sm">{{ article.title }}</p>
+               <div class="flex items-center justify-between mt-3">
+                 <span class="text-xs text-gray-500">{{ article.author }}</span>
+                 <img [src]="article.avatar" [alt]="article.author" class="w-6 h-6 rounded-full object-cover">
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Review Column -->
+      <div 
+        (dragover)="onDragOver($event, 'review')" 
+        (dragleave)="onDragLeave()" 
+        (drop)="onDrop($event, 'review')" 
+        class="flex flex-col rounded-lg border-2 border-transparent transition-colors"
+        [class.border-dashed]="dragOverStatus() === 'review'"
+        [class.border-purple-400]="dragOverStatus() === 'review'">
+        <h3 class="font-bold text-center p-3 rounded-t-lg text-purple-800 bg-purple-100 border-b-2 border-purple-300">👀 قيد المراجعة ({{ articles().review.length }})</h3>
+        <div class="p-3 space-y-3 bg-purple-50 rounded-b-lg h-full overflow-y-auto">
+           @for (article of articles().review; track article.id) {
+            <div draggable="true" (dragstart)="onDragStart(article.id)" class="p-4 bg-white rounded-lg shadow-sm cursor-grab active:cursor-grabbing border-l-4 border-purple-400">
+              <p class="font-semibold text-sm">{{ article.title }}</p>
+              <div class="flex items-center justify-between mt-3">
+                 <span class="text-xs text-gray-500">{{ article.author }}</span>
+                 <img [src]="article.avatar" [alt]="article.author" class="w-6 h-6 rounded-full object-cover">
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Published Column -->
+      <div 
+        (dragover)="onDragOver($event, 'published')" 
+        (dragleave)="onDragLeave()" 
+        (drop)="onDrop($event, 'published')" 
+        class="flex flex-col rounded-lg border-2 border-transparent transition-colors"
+        [class.border-dashed]="dragOverStatus() === 'published'"
+        [class.border-green-400]="dragOverStatus() === 'published'">
+        <h3 class="font-bold text-center p-3 rounded-t-lg text-green-800 bg-green-100 border-b-2 border-green-300">✅ تم النشر ({{ articles().published.length }})</h3>
+        <div class="p-3 space-y-3 bg-green-50 rounded-b-lg h-full overflow-y-auto">
+           @for (article of articles().published; track article.id) {
+            <div draggable="true" (dragstart)="onDragStart(article.id)" class="p-4 bg-white rounded-lg shadow-sm cursor-grab active:cursor-grabbing opacity-70 border-l-4 border-green-400">
+              <p class="font-semibold text-sm">{{ article.title }}</p>
+              <div class="flex items-center justify-between mt-3">
+                 <span class="text-xs text-gray-500">{{ article.author }}</span>
+                 <img [src]="article.avatar" [alt]="article.author" class="w-6 h-6 rounded-full object-cover">
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

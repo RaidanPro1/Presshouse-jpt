@@ -1,0 +1,155 @@
+<div class="bg-base-100">
+
+  <!-- Hero Slider Section -->
+  <section class="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
+    @for (slide of slides(); track $index; let i = $index) {
+      <div 
+        class="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out"
+        [class.opacity-100]="currentSlide() === i"
+        [class.opacity-0]="currentSlide() !== i">
+        @if (!settingsService.isLowBandwidthMode()) {
+          <img [src]="slide.imageUrl" class="w-full h-full object-cover" alt="{{slide.title}}">
+        } @else {
+          <div class="w-full h-full bg-gray-700"></div>
+        }
+        <div class="absolute inset-0 bg-black/60"></div>
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+          <h1 class="text-4xl md:text-6xl font-extrabold">{{slide.title}}</h1>
+          <p class="mt-4 text-lg md:text-2xl max-w-3xl">{{slide.subtitle}}</p>
+        </div>
+      </div>
+    }
+    <!-- Controls -->
+    <button (click)="prevSlide()" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full z-10">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+    </button>
+    <button (click)="nextSlide()" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full z-10">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+    </button>
+    <!-- Dots -->
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+      @for (slide of slides(); track $index; let i = $index) {
+        <button (click)="goToSlide(i)" class="w-3 h-3 rounded-full transition-colors" [class]="currentSlide() === i ? 'bg-white' : 'bg-white'"></button>
+      }
+    </div>
+  </section>
+
+  <!-- Introduction -->
+  <section class="py-16 md:py-24 animate-fade-in">
+    <div class="container mx-auto px-4 max-w-4xl">
+      <div class="text-center">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-ph-blue">مقدمة</h2>
+        <p class="mt-6 text-lg text-gray-600 leading-relaxed">
+         {{ aboutContent().introduction }}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vision & Mission -->
+  <section class="py-16 md:py-24 bg-base-200 animate-fade-in">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-center">
+        <!-- Vision -->
+        <div>
+          <div class="w-20 h-20 bg-ph-blue text-white rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+          </div>
+          <h3 class="text-2xl font-bold text-ph-blue">رؤيتنا</h3>
+          <p class="mt-2 text-xl text-gray-700">{{ aboutContent().vision }}</p>
+        </div>
+        <!-- Mission -->
+        <div>
+          <div class="w-20 h-20 bg-ph-blue text-white rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" /></svg>
+          </div>
+          <h3 class="text-2xl font-bold text-ph-blue">رسالتنا</h3>
+          <p class="mt-2 text-lg text-gray-700">{{ aboutContent().mission }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Objectives -->
+  <section class="py-16 md:py-24 animate-fade-in">
+    <div class="container mx-auto px-4 max-w-5xl">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-ph-blue">أهدافنا</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        @for(objective of aboutContent().objectives; track objective) {
+          <div class="flex items-start">
+            <div class="flex-shrink-0 w-8 h-8 bg-ph-yellow/20 text-ph-blue rounded-full flex items-center justify-center me-4">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+            </div>
+            <p class="text-gray-700">{{ objective }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+  
+  <!-- Team -->
+  <section class="py-16 md:py-24 bg-base-200 animate-fade-in">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-ph-blue">فريق بيت الصحافة</h2>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8">
+        @for(member of team(); track member.id) {
+          <div class="text-center">
+            @if (!settingsService.isLowBandwidthMode()) {
+              <img [src]="member.imageUrl" alt="{{member.name}}" class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg object-cover">
+            } @else {
+              <div class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg bg-gray-300"></div>
+            }
+            <h4 class="font-bold text-gray-800">{{member.name}}</h4>
+            <p class="text-sm text-gray-500">{{member.title}}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Advisory Board -->
+  <section class="py-16 md:py-24 animate-fade-in">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-ph-blue">الهيئة الاستشارية</h2>
+      </div>
+      <div class="flex flex-wrap justify-center gap-8">
+        @for(member of advisors(); track member.id) {
+          <div class="text-center">
+            @if (!settingsService.isLowBandwidthMode()) {
+              <img [src]="member.imageUrl" alt="{{member.name}}" class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg object-cover">
+            } @else {
+               <div class="w-24 h-24 rounded-full mx-auto mb-3 ring-4 ring-white shadow-lg bg-gray-300"></div>
+            }
+            <h4 class="font-bold text-gray-800">{{member.name}}</h4>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Partners -->
+  <section class="py-16 md:py-24 bg-base-200 animate-fade-in">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-ph-blue">شركاؤنا</h2>
+      </div>
+      <div class="flex flex-wrap justify-center items-center gap-x-16 gap-y-8">
+        @for(partner of partners(); track partner.name) {
+          <div class="h-20 flex items-center justify-center" title="{{ partner.name }}">
+             @if (!settingsService.isLowBandwidthMode()) {
+              <img [src]="partner.logoUrl" [alt]="partner.name" class="max-h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
+            } @else {
+              <div class="h-16 w-32 bg-gray-300 rounded flex items-center justify-center text-xs text-gray-500">{{partner.name}}</div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+</div>

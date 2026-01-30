@@ -1,0 +1,67 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h3 class="text-xl font-bold text-gray-900">إدارة مظهر المنصة</h3>
+    <p class="text-gray-500 mt-1 text-sm">
+      تخصيص الألوان، الخطوط، والشعار ليتناسب مع هوية المؤسسة.
+    </p>
+  </div>
+
+  <div class="bg-base-200/50 p-6 rounded-xl shadow-inner space-y-6">
+    <form #themeForm="ngForm" (ngSubmit)="saveTheme()">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Color Picker -->
+        <div>
+          <label for="primary-color" class="block mb-2 text-sm font-medium text-gray-800">اللون الأساسي</label>
+          <div class="flex items-center gap-2">
+            <input 
+              type="color" 
+              id="primary-color"
+              [ngModel]="editableTheme().primaryColor"
+              (ngModelChange)="updatePrimaryColor($event)"
+              name="primaryColor"
+              class="p-1 h-10 w-10 block bg-white border border-gray-300 cursor-pointer rounded-lg">
+            <input 
+              type="text" 
+              [ngModel]="editableTheme().primaryColor"
+              (ngModelChange)="updatePrimaryColor($event)"
+              name="primaryColorHex"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg block w-full p-2.5 font-mono">
+          </div>
+        </div>
+
+        <!-- Font Selector -->
+        <div>
+          <label for="font-family" class="block mb-2 text-sm font-medium text-gray-800">خطوط الواجهة</label>
+          <select 
+            id="font-family"
+            [ngModel]="editableTheme().fontFamily"
+            (ngModelChange)="updateFontFamily($event)"
+            name="fontFamily"
+            class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5">
+            @for(font of fonts; track font.value) {
+              <option [value]="font.value">{{font.name}}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Logo Upload -->
+        <div class="md:col-span-2">
+          <label for="logo-upload" class="block mb-2 text-sm font-medium text-gray-800">شعار المنصة</label>
+          <div class="flex items-center gap-4">
+            <img [src]="editableTheme().logoUrl" alt="Current logo" class="h-12 bg-gray-200 p-1 rounded">
+            <input id="logo-upload" type="file" (change)="handleLogoUpload($event)" accept="image/png, image/jpeg, image/svg+xml" class="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-none">
+          </div>
+        </div>
+      </div>
+       <div class="mt-8 flex justify-end">
+        <button type="submit" class="px-6 py-2.5 font-semibold text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark flex items-center justify-center w-36" [disabled]="saveStatus() === 'saving'">
+            @switch (saveStatus()) {
+              @case ('idle') { <span>حفظ المظهر</span> }
+              @case ('saving') { <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> }
+              @case ('saved') { <span>تم الحفظ!</span> }
+            }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

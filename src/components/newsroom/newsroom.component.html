@@ -1,0 +1,51 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">غرفة الأخبار الرقمية</h1>
+    <p class="text-gray-500 mt-1">
+      تنظيم فوضى العمل الصحفي والنشر الآمن. أدوات لإدارة دورة حياة الخبر من الفكرة إلى النشر.
+    </p>
+  </div>
+
+  <section>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (tool of newsroomTools(); track tool.id) {
+        <app-tool-card 
+          [tool]="tool" 
+          [userRole]="user()?.role ?? 'guest'"
+          (toggleStatus)="handleToolToggle($event)"
+          (toggleFavorite)="handleToggleFavorite($event)"
+          (runTool)="handleRunTool($event)"></app-tool-card>
+      }
+    </div>
+  </section>
+
+  <section class="bg-base-100 p-6 rounded-xl shadow">
+    <h2 class="text-xl font-bold mb-4">سير العمل المقترح</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+      <!-- Step 1: Planning -->
+      <div class="p-4 rounded-lg">
+        <div class="text-3xl mb-2">1️⃣</div>
+        <h3 class="font-semibold">التخطيط والتكليف</h3>
+        <p class="text-sm text-gray-500 mt-1">
+          استخدم <span class="font-bold">Superdesk</span> لإنشاء قصة جديدة وتكليف الصحفيين بالمهام.
+        </p>
+      </div>
+      <!-- Step 2: Collaboration -->
+      <div class="p-4 rounded-lg">
+        <div class="text-3xl mb-2">2️⃣</div>
+        <h3 class="font-semibold">الكتابة والتعاون</h3>
+        <p class="text-sm text-gray-500 mt-1">
+          اكتب المسودات وشارك الملفات مع فريقك بشكل آمن عبر <span class="font-bold">Nextcloud Hub</span>.
+        </p>
+      </div>
+      <!-- Step 3: Publishing -->
+      <div class="p-4 rounded-lg">
+        <div class="text-3xl mb-2">3️⃣</div>
+        <h3 class="font-semibold">التحرير والنشر</h3>
+        <p class="text-sm text-gray-500 mt-1">
+          بعد اكتمال المراجعة، انشر القصة النهائية للجمهور عبر منصة <span class="font-bold">Ghost-YE</span>.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>

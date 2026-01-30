@@ -1,0 +1,93 @@
+<section class="space-y-8">
+  <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-ph-yellow pb-2">إدارة البريد الإلكتروني</h2>
+  
+  <!-- SMTP Configuration -->
+  <div class="bg-base-100 p-6 rounded-xl shadow">
+    <h3 class="text-xl font-bold text-gray-900 mb-4">إعدادات خادم البريد (SMTP)</h3>
+    <form #smtpForm="ngForm" (ngSubmit)="saveSettings()" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="smtp-host" class="block text-sm font-medium">Host</label>
+          <input type="text" id="smtp-host" name="smtpHost" [(ngModel)]="smtpConfig().host" required class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+        <div>
+          <label for="smtp-port" class="block text-sm font-medium">Port</label>
+          <input type="number" id="smtp-port" name="smtpPort" [(ngModel)]="smtpConfig().port" required class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+        <div>
+          <label for="smtp-user" class="block text-sm font-medium">Username</label>
+          <input type="text" id="smtp-user" name="smtpUser" [(ngModel)]="smtpConfig().user" required class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+        <div>
+          <label for="smtp-pass" class="block text-sm font-medium">Password</label>
+          <input type="password" id="smtp-pass" name="smtpPass" [(ngModel)]="smtpConfig().pass" required class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+      </div>
+      <div class="flex justify-end">
+        <button type="submit" [disabled]="smtpForm.invalid" class="px-4 py-2 text-white bg-ph-blue rounded-lg disabled:bg-gray-400">حفظ الإعدادات</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- User Account Management -->
+  <div class="bg-base-100 p-6 rounded-xl shadow">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-bold text-gray-900">حسابات البريد الإلكتروني للمستخدمين</h3>
+      <button (click)="openAddUserModal()" class="px-4 py-2 text-sm text-white bg-ph-blue rounded-lg">+ إضافة حساب</button>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-right text-gray-600">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th class="py-3 px-6">الاسم</th>
+            <th class="py-3 px-6">البريد الإلكتروني</th>
+            <th class="py-3 px-6">الأسماء المستعارة (Aliases)</th>
+            <th class="py-3 px-6">الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(user of emailUsers(); track user.id) {
+            <tr class="bg-white border-b">
+              <td class="py-4 px-6 font-medium text-gray-900">{{ user.name }}</td>
+              <td class="py-4 px-6">{{ user.email }}</td>
+              <td class="py-4 px-6">{{ user.aliases.join(', ') || '-' }}</td>
+              <td class="py-4 px-6 space-x-2">
+                <button (click)="openEditUserModal(user)" class="text-blue-600 hover:underline">تعديل</button>
+                <button (click)="removeUser(user.id)" class="text-red-600 hover:underline">حذف</button>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="text-center p-4">لا توجد حسابات بريد إلكتروني.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Add/Edit User Modal -->
+@if(isUserModalOpen() && selectedUser(); as user) {
+  <div class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center" (click)="closeUserModal()">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg p-6" (click)="$event.stopPropagation()">
+      <h3 class="text-xl font-bold mb-4">{{ user.id ? 'تعديل' : 'إضافة' }} حساب بريد إلكتروني</h3>
+      <form #userForm="ngForm" (ngSubmit)="saveUser()" class="space-y-4">
+        <div>
+          <label for="userName" class="block text-sm font-medium">الاسم</label>
+          <input type="text" id="userName" name="userName" [(ngModel)]="user.name" required class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+        <div>
+          <label for="userEmail" class="block text-sm font-medium">البريد الإلكتروني</label>
+          <input type="email" id="userEmail" name="userEmail" [(ngModel)]="user.email" required class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+        <div>
+          <label for="userAliases" class="block text-sm font-medium">الأسماء المستعارة (مفصولة بفاصلة)</label>
+          <input type="text" id="userAliases" name="userAliases" [ngModel]="user.aliases.join(', ')" (ngModelChange)="updateAliases($event)" class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+        <div class="flex justify-end gap-2 mt-4">
+          <button type="button" (click)="closeUserModal()" class="px-4 py-2 bg-gray-200 rounded-lg">إلغاء</button>
+          <button type="submit" [disabled]="userForm.invalid" class="px-4 py-2 text-white bg-ph-blue rounded-lg disabled:bg-gray-400">حفظ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

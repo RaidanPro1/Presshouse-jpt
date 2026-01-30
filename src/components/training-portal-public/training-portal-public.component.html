@@ -1,0 +1,84 @@
+<div class="bg-base-100 animate-fade-in">
+  <!-- Hero Slider Section -->
+  <section class="relative h-[50vh] w-full overflow-hidden bg-base-200">
+    @for (slide of slides(); track $index; let i = $index) {
+      <div 
+        class="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out"
+        [class.opacity-100]="currentSlide() === i"
+        [class.opacity-0]="currentSlide() !== i">
+        <img [src]="slide.imageUrl" class="w-full h-full object-cover" alt="{{slide.title}}">
+        <div class="absolute inset-0 bg-black/60"></div>
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
+          <h1 class="text-4xl md:text-5xl font-extrabold text-white">{{slide.title}}</h1>
+          <p class="mt-4 text-xl md:text-2xl max-w-3xl">{{slide.subtitle}}</p>
+          <div class="mt-8">
+            <button (click)="onLogin()" class="px-8 py-4 text-lg font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+              {{slide.actionText}}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+    <!-- Controls -->
+    <button (click)="prevSlide()" class="absolute top-1/2 left-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full z-10">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+    </button>
+    <button (click)="nextSlide()" class="absolute top-1/2 right-4 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white p-3 rounded-full z-10">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+    </button>
+    <!-- Dots -->
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
+      @for (slide of slides(); track $index; let i = $index) {
+        <button (click)="goToSlide(i)" class="w-3 h-3 rounded-full transition-colors" [class]="currentSlide() === i ? 'bg-white' : 'bg-white/50 hover:bg-white'"></button>
+      }
+    </div>
+  </section>
+
+  <section class="py-16 md:py-24">
+    <div class="container mx-auto px-4 max-w-6xl">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-gray-800">مجالات التدريب الرئيسية</h2>
+        <p class="mt-3 text-lg text-gray-500">برامج مصممة خصيصاً لتلبية احتياجات الصحفي اليمني.</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="bg-base-200 p-8 rounded-lg text-center">
+          <h3 class="font-bold text-xl text-ph-blue">الصحافة الاستقصائية</h3>
+          <p class="text-sm text-gray-600 mt-2">منهجيات التحقيق، بناء الفرضيات، والتحقق من المصادر.</p>
+        </div>
+        <div class="bg-base-200 p-8 rounded-lg text-center">
+          <h3 class="font-bold text-xl text-ph-blue">صحافة البيانات</h3>
+          <p class="text-sm text-gray-600 mt-2">جمع، تحليل، وتصوير البيانات لإنتاج قصص صحفية عميقة.</p>
+        </div>
+        <div class="bg-base-200 p-8 rounded-lg text-center">
+          <h3 class="font-bold text-xl text-ph-blue">الأمان الرقمي</h3>
+          <p class="text-sm text-gray-600 mt-2">حماية الاتصالات، تأمين الأجهزة، والتصفح الآمن.</p>
+        </div>
+        <div class="bg-base-200 p-8 rounded-lg text-center">
+          <h3 class="font-bold text-xl text-ph-blue">التحقق من المعلومات</h3>
+          <p class="text-sm text-gray-600 mt-2">أدوات وتقنيات كشف التزييف والتضليل الإعلامي.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="py-16 md:py-24 bg-base-200">
+    <div class="container mx-auto px-4 max-w-5xl text-center">
+        <h2 class="text-3xl font-bold text-gray-800 mb-10">ميزات البوابة</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="p-6">
+                <h3 class="font-semibold text-xl">مدربون خبراء</h3>
+                <p class="text-gray-600 mt-2">نخبة من أفضل المدربين المحليين والدوليين في مجال الصحافة والإعلام.</p>
+            </div>
+             <div class="p-6">
+                <h3 class="font-semibold text-xl">محتوى متخصص</h3>
+                <p class="text-gray-600 mt-2">مواد تدريبية مصممة خصيصاً لتناسب السياق اليمني والتحديات التي يواجهها الصحفيون.</p>
+            </div>
+             <div class="p-6">
+                <h3 class="font-semibold text-xl">شهادات معتمدة</h3>
+                <p class="text-gray-600 mt-2">يحصل المشاركون على شهادات معتمدة عند إتمامهم للدورات التدريبية بنجاح.</p>
+            </div>
+        </div>
+    </div>
+  </section>
+</div>

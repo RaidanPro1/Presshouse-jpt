@@ -1,0 +1,186 @@
+<div class="bg-base-100 p-6 rounded-xl shadow-lg max-w-4xl mx-auto">
+  <div class="border-b-2 border-ph-yellow pb-4 mb-6">
+    <h2 class="text-3xl font-bold text-gray-800">استمارة توثيق الانتهاكات - بيت الصحافة</h2>
+    <p class="mt-2 text-gray-600">
+      ندرك أن تعبئة هذه الاستمارة في ظل الظروف الراهنة هو عمل شجاع. نضع بين يديك التزاماتنا الصارمة تجاهك وتجاه كل معلومة تشاركنا إياها، ونؤكد أن صوتك في أمان.
+    </p>
+  </div>
+  
+  <form #reportForm="ngForm" (ngSubmit)="submitForm()">
+    <div class="space-y-8">
+      <!-- Section 1: Reporter Identity -->
+      <fieldset class="space-y-3">
+        <legend class="text-lg font-semibold text-gray-900">1. صفتك في هذا البلاغ <span class="text-red-500">*</span></legend>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <label class="flex-1 flex items-center p-4 border rounded-lg cursor-pointer" [class.border-ph-blue]="reportAs() === 'victim'" [class.bg-ph-blue-light]="reportAs() === 'victim'">
+            <input type="radio" name="reportAs" value="victim" [(ngModel)]="reportAs" class="h-4 w-4 text-ph-blue border-gray-300 focus:ring-ph-blue">
+            <span class="ms-3 text-sm font-medium text-gray-900">أنا الصحفي المتضرر شخصياً</span>
+          </label>
+          <label class="flex-1 flex items-center p-4 border rounded-lg cursor-pointer" [class.border-ph-blue]="reportAs() === 'proxy'" [class.bg-ph-blue-light]="reportAs() === 'proxy'">
+            <input type="radio" name="reportAs" value="proxy" [(ngModel)]="reportAs" class="h-4 w-4 text-ph-blue border-gray-300 focus:ring-ph-blue">
+            <span class="ms-3 text-sm font-medium text-gray-900">أنا قريب أو زميل أو محامي أبلغ نيابة عن الصحفي</span>
+          </label>
+        </div>
+      </fieldset>
+      
+      <!-- Section 2: Proxy Reporter Data (conditional) -->
+      @if (reportAs() === 'proxy') {
+        <fieldset class="space-y-4 border-t pt-6 animate-fade-in">
+          <legend class="text-lg font-semibold text-gray-900">2. بيانات المُبلِّغ</legend>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">اسمك الكامل <span class="text-red-500">*</span></label>
+              <input type="text" [(ngModel)]="proxyName" name="proxyName" required class="w-full p-2 border rounded-md bg-gray-50">
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">رقم هاتفك للتواصل (مع رمز الدولة) <span class="text-red-500">*</span></label>
+              <input type="tel" [(ngModel)]="proxyPhone" name="proxyPhone" required class="w-full p-2 border rounded-md bg-gray-50">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">ما هي صلة القرابة أو العلاقة بالصحفي؟ <span class="text-red-500">*</span></label>
+            <select [(ngModel)]="proxyRelationship" name="proxyRelationship" required class="w-full p-2 border rounded-md bg-gray-50">
+              <option value="">-- اختر --</option>
+              @for(rel of relationshipOptions; track rel){ <option [value]="rel">{{ rel }}</option> }
+            </select>
+          </div>
+        </fieldset>
+      }
+
+      <!-- Section 3: Victim's Identity -->
+      <fieldset class="space-y-4 border-t pt-6">
+        <legend class="text-lg font-semibold text-gray-900">{{ reportAs() === 'proxy' ? '3.' : '2.' }} هوية الصحفي الضحية</legend>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">الاسم الرباعي للصحفي <span class="text-red-500">*</span></label>
+            <input type="text" [(ngModel)]="victimFullName" name="victimFullName" required class="w-full p-2 border rounded-md bg-gray-50">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">اسم الشهرة (إن وجد)</label>
+            <input type="text" [(ngModel)]="victimAlias" name="victimAlias" class="w-full p-2 border rounded-md bg-gray-50">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">المؤسسة الإعلامية التي يعمل لصالحها</label>
+          <input type="text" [(ngModel)]="victimMediaOrg" name="victimMediaOrg" class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">حسابات التواصل الاجتماعي للصحفي (إن وجدت)</label>
+          <textarea [(ngModel)]="victimSocialAccounts" name="victimSocialAccounts" rows="2" class="w-full p-2 border rounded-md bg-gray-50"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">رقم واتساب الصحفي (إذا كان متاحاً وآمناً للتواصل)</label>
+          <input type="tel" [(ngModel)]="victimWhatsapp" name="victimWhatsapp" class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+      </fieldset>
+      
+      <!-- Section 4: Incident Details -->
+      <fieldset class="space-y-4 border-t pt-6">
+        <legend class="text-lg font-semibold text-gray-900">جغرافيا الحدث وتفاصيله</legend>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">المحافظة التي وقع فيها الانتهاك <span class="text-red-500">*</span></label>
+            <select [(ngModel)]="incidentGovernorate" name="incidentGovernorate" required class="w-full p-2 border rounded-md bg-gray-50">
+               <option value="">-- اختر محافظة --</option>
+               @for(gov of governorates; track gov) { <option [value]="gov">{{ gov }}</option> }
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">المديرية أو المنطقة المحددة</label>
+            <input type="text" [(ngModel)]="incidentDistrict" name="incidentDistrict" class="w-full p-2 border rounded-md bg-gray-50">
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">متى حدث ذلك؟ <span class="text-red-500">*</span></label>
+          <input type="datetime-local" [(ngModel)]="incidentDate" name="incidentDate" required class="w-full p-2 border rounded-md bg-gray-50">
+        </div>
+      </fieldset>
+
+      <!-- Section 5: Perpetrator and Context -->
+      <fieldset class="space-y-4 border-t pt-6">
+        <legend class="text-lg font-semibold text-gray-900">الجهة المنتهكة والسياق</legend>
+        <div>
+          <label class="block text-sm font-medium mb-2">من هي الجهة التي قامت بالانتهاك؟ <span class="text-red-500">*</span> (يمكنك تحديد أكثر من إجابة)</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            @for(perp of perpetratorOptions; track perp){
+              <label class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                <input type="checkbox" [checked]="isPerpetratorSelected(perp)" (change)="onCheckboxChange($event, perp, perpetrators)" class="h-4 w-4 rounded text-ph-blue">
+                <span class="ms-2 text-sm">{{ perp }}</span>
+              </label>
+            }
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">لماذا حدث هذا الانتهاك برأيك؟</label>
+          <textarea [(ngModel)]="incidentReason" name="incidentReason" rows="3" class="w-full p-2 border rounded-md bg-gray-50" placeholder="اشرح لنا السبب كما يراه الصحفي..."></textarea>
+        </div>
+         <div>
+          <label class="block text-sm font-medium mb-1">سرد القصة الكاملة <span class="text-red-500">*</span></label>
+          <textarea [(ngModel)]="incidentStory" name="incidentStory" required rows="6" class="w-full p-2 border rounded-md bg-gray-50" placeholder="يرجى سرد تفاصيل الواقعة بشكل دقيق..."></textarea>
+        </div>
+      </fieldset>
+
+       <!-- Section 6: Evidence -->
+      <fieldset class="space-y-4 border-t pt-6">
+        <legend class="text-lg font-semibold text-gray-900">الأدلة والتوثيق</legend>
+        <div>
+          <label class="block text-sm font-medium mb-2">هل تتوفر لديكم وثائق أو أدلة؟</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            @for(ev of evidenceOptions; track ev){
+              <label class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                <input type="checkbox" [checked]="isEvidenceSelected(ev)" (change)="onCheckboxChange($event, ev, evidenceTypes)" class="h-4 w-4 rounded text-ph-blue">
+                <span class="ms-2 text-sm">{{ ev }}</span>
+              </label>
+            }
+          </div>
+        </div>
+         <div>
+          <label class="block text-sm font-medium mb-1">رابط للملفات والأدلة</label>
+          <input type="url" [(ngModel)]="evidenceLink" name="evidenceLink" class="w-full p-2 border rounded-md bg-gray-50" placeholder="رابط جوجل درايف أو أي خدمة سحابية أخرى...">
+        </div>
+      </fieldset>
+
+      <!-- Section 7: Needs -->
+      <fieldset class="space-y-4 border-t pt-6">
+        <legend class="text-lg font-semibold text-gray-900">التوصيات والمتابعة</legend>
+         <div>
+          <label class="block text-sm font-medium mb-2">ماذا يحتاج الصحفي الآن بشكل عاجل؟</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            @for(need of needsOptions; track need){
+              <label class="flex items-center p-2 rounded-md hover:bg-gray-100">
+                <input type="checkbox" [checked]="isNeedSelected(need)" (change)="onCheckboxChange($event, need, urgentNeeds)" class="h-4 w-4 rounded text-ph-blue">
+                <span class="ms-2 text-sm">{{ need }}</span>
+              </label>
+            }
+          </div>
+        </div>
+      </fieldset>
+      
+      <!-- Section 8: Publication Policy -->
+      <fieldset class="space-y-3 border-t pt-6">
+        <legend class="text-lg font-semibold text-gray-900">سياسة النشر والخصوصية <span class="text-red-500">*</span></legend>
+        <div class="flex flex-col gap-3">
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="publicationPolicy" value="public" [(ngModel)]="publicationPolicy" required class="h-4 w-4 text-ph-blue">
+            <span class="ms-3 text-sm font-medium text-gray-900">نشر القصة كاملة للرأي العام</span>
+          </label>
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="publicationPolicy" value="anonymous" [(ngModel)]="publicationPolicy" required class="h-4 w-4 text-ph-blue">
+            <span class="ms-3 text-sm font-medium text-gray-900">النشر مع إخفاء هوية الصحفي</span>
+          </label>
+          <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50">
+            <input type="radio" name="publicationPolicy" value="private" [(ngModel)]="publicationPolicy" required class="h-4 w-4 text-ph-blue">
+            <span class="ms-3 text-sm font-medium text-gray-900">حفظها في الأرشيف السري وعدم النشر نهائياً</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Submission -->
+      <div class="border-t pt-6 text-center">
+         <button type="submit" [disabled]="reportForm.invalid" class="px-8 py-3 font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
+           إرسال البلاغ بشكل آمن
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

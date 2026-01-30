@@ -1,0 +1,159 @@
+
+<header class="h-16 flex items-center justify-between px-4 md:px-8 bg-white border-b border-gray-200">
+  <div class="flex items-center">
+    @if (isAuthenticated()) {
+      <!-- Mobile menu button -->
+      <button (click)="onToggleSidebar()" class="lg:hidden p-2 rounded-md text-gray-500 hover:text-ph-blue hover:bg-gray-100 me-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+      
+      <!-- Search -->
+      <div class="relative w-full max-w-md">
+        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+          <svg class="w-5 h-5 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+          </svg>
+        </div>
+        <input 
+          type="search" 
+          (input)="handleSearch($event)"
+          [value]="searchService.searchTerm()"
+          class="block w-full p-2.5 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-ph-blue focus:border-ph-blue" 
+          placeholder="بحث في الأدوات..." />
+      </div>
+    } @else {
+      <div class="flex items-center cursor-pointer" (click)="onNavigate('home')">
+        <img src="assets/logos/press-house-logo.png" alt="Press House Logo" class="h-10">
+        <div class="text-right mr-2">
+          <h1 class="text-lg font-bold text-ph-blue">بيت الصحافة</h1>
+          <p class="text-xs text-gray-500">Yemen Press House</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (!isAuthenticated()) {
+  <nav class="hidden md:flex items-center gap-6">
+    @for(link of publicNavLinks; track link.key) {
+      <a (click)="onNavigate(link.key)" href="javascript:void(0)" class="text-sm font-semibold text-gray-600 hover:text-ph-blue transition-colors flex items-center gap-1">
+        @if(link.key === 'platform-overview') {
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" /></svg>
+        }
+        {{ link.name }}
+      </a>
+    }
+  </nav>
+  }
+
+
+  <!-- User Menu / Login Buttons -->
+  <div class="flex items-center space-i-4">
+    @if (isAuthenticated() && user(); as currentUser) {
+      <!-- Portals Dropdown -->
+      <div class="relative">
+        <button (click)="togglePortalDropdown()" class="p-2 rounded-full text-gray-500 hover:bg-gray-100" title="Portals">
+           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+          </svg>
+        </button>
+        @if (isPortalDropdownOpen()) {
+          <div (click)="closePortalDropdown()" class="fixed inset-0 z-10"></div>
+          <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-20 animate-scale-in-dropdown border border-gray-200">
+            @for (link of portalLinks; track link.key) {
+              @if(isRoleSufficient(link.allowedRoles)) {
+                <a (click)="onNavigate(link.key)" href="javascript:void(0)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{link.name}}</a>
+              }
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Notifications Bell -->
+      <div class="relative">
+        <button (click)="toggleNotificationDropdown()" class="p-2 rounded-full text-gray-500 hover:bg-gray-100" title="Notifications">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
+          </svg>
+          @if (notificationService.unreadCount() > 0) {
+            <span class="absolute top-1 end-1 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white"></span>
+          }
+        </button>
+
+        <!-- Notification Dropdown -->
+        @if (isNotificationDropdownOpen()) {
+          <div (click)="closeNotificationDropdown()" class="fixed inset-0 z-10"></div>
+          <div class="absolute left-0 mt-2 w-80 bg-white rounded-md shadow-lg z-20 animate-scale-in-dropdown border border-gray-200">
+            <div class="p-3 flex justify-between items-center border-b border-gray-200">
+              <h3 class="font-bold text-gray-800">الإشعارات</h3>
+              @if (notificationService.unreadCount() > 0) {
+                <button (click)="markAllNotificationsAsRead()" class="text-xs text-blue-600 hover:underline">تحديد الكل كمقروء</button>
+              }
+            </div>
+            <div class="max-h-96 overflow-y-auto">
+              @for (notification of notificationService.notifications(); track notification.id) {
+                <div class="p-3 flex items-start gap-3 hover:bg-gray-50 border-b border-gray-100" [class.opacity-60]="notification.read">
+                  @if (!notification.read) {
+                    <span class="w-2 h-2 mt-1.5 rounded-full bg-blue-500 flex-shrink-0"></span>
+                  } @else {
+                    <span class="w-2 h-2 mt-1.5 flex-shrink-0"></span>
+                  }
+                  <div>
+                    <p class="text-sm text-gray-700">{{ notification.message }}</p>
+                    <p class="text-xs text-gray-500 mt-1">{{ timeAgo(notification.timestamp) }}</p>
+                  </div>
+                </div>
+              } @empty {
+                <p class="text-center text-sm text-gray-500 p-6">لا توجد إشعارات.</p>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="relative">
+        <button (click)="toggleDropdown()" class="flex items-center space-i-2">
+          <img [src]="currentUser.avatar" alt="User Avatar" class="w-10 h-10 rounded-full bg-gray-200 object-cover">
+          <div class="hidden sm:block text-right">
+            <p class="font-semibold text-sm text-gray-800">{{ currentUser.name }}</p>
+            <p class="text-xs text-gray-500">{{ getRoleDisplayName(currentUser.role) }}</p>
+          </div>
+        </button>
+
+        <!-- Dropdown -->
+        @if (isDropdownOpen()) {
+          <!-- Backdrop for closing dropdown on click away -->
+          <div (click)="closeDropdown()" class="fixed inset-0 z-10"></div>
+          
+          <div class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 animate-scale-in-dropdown border border-gray-200">
+            <a (click)="onNavigate('profile')" href="javascript:void(0)" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ملفي الشخصي</a>
+            <div class="border-t border-gray-200"></div>
+            <div class="px-4 py-3">
+              <label for="lowBandwidthToggle" class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm text-gray-700">وضع النطاق المنخفض</span>
+                <div class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="lowBandwidthToggle" class="sr-only peer" [checked]="settingsService.isLowBandwidthMode()" (change)="toggleLowBandwidthMode()">
+                  <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </div>
+              </label>
+            </div>
+            <div class="border-t border-gray-200"></div>
+            <button (click)="onLogout()" class="w-full text-right block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+              تسجيل الخروج
+            </button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="flex items-center space-i-2">
+          <button (click)="onNavigate('register')" class="px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+            إنشاء حساب
+          </button>
+          <button (click)="onLogin()" class="px-4 py-2 text-sm font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200">
+            دخول
+          </button>
+      </div>
+    }
+  </div>
+</header>

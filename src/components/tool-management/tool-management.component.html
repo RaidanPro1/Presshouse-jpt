@@ -1,0 +1,104 @@
+<div class="bg-base-100 p-6 rounded-xl shadow h-full flex flex-col animate-fade-in">
+  <div class="flex-shrink-0 mb-6">
+    <h1 class="text-2xl font-bold text-gray-900">إدارة الأدوات والصلاحيات</h1>
+    <p class="text-gray-500">تحكم في الأدوات المتاحة، عدّل تفاصيلها، وحدد من يمكنه رؤيتها واستخدامها.</p>
+  </div>
+
+  <div class="flex-grow overflow-x-auto relative shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+                <th scope="col" class="py-3 px-6">الأداة</th>
+                <th scope="col" class="py-3 px-6 text-center">الحالة (نشط)</th>
+                <th scope="col" class="py-3 px-6 text-center">ظهور للعامة</th>
+                <th scope="col" class="py-3 px-6">صلاحيات الوصول</th>
+                <th scope="col" class="py-3 px-6 text-center">الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(tool of allTools(); track tool.id) {
+              <tr class="bg-white border-b">
+                  <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap">
+                      {{ tool.name }}
+                      <p class="text-xs text-gray-400">{{ tool.category }}</p>
+                  </td>
+                  <td class="py-4 px-6 text-center">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" [checked]="tool.isActive" (change)="onToggleIsActive(tool)" class="sr-only peer">
+                      <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ph-blue"></div>
+                    </label>
+                  </td>
+                  <td class="py-4 px-6 text-center">
+                     <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" [checked]="tool.isVisiblePublicly" (change)="onToggleIsPublic(tool)" class="sr-only peer">
+                      <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                    </label>
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+                      @for(role of roles; track role) {
+                        <label class="flex items-center space-i-2 cursor-pointer">
+                          <input 
+                            type="checkbox" 
+                            [checked]="isRoleAllowed(tool, role)"
+                            (change)="onToggleAllowedRole(tool, role)"
+                            [disabled]="role === 'super-admin' && isRoleAllowed(tool, role)"
+                            class="w-4 h-4 text-ph-blue bg-gray-100 border-gray-300 rounded focus:ring-ph-blue focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                          <span class="text-xs font-medium">{{ getRoleDisplayName(role) }}</span>
+                        </label>
+                      }
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-center">
+                      <button (click)="openToolEditModal(tool)" class="font-medium text-ph-blue hover:underline">تعديل</button>
+                  </td>
+              </tr>
+            }
+        </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Edit Tool Modal -->
+@if (isToolModalOpen() && selectedToolForEdit(); as tool) {
+  <div class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center animate-fade-in" (click)="closeToolEditModal()">
+    <div class="bg-base-100 rounded-lg shadow-xl w-full max-w-2xl p-6" (click)="$event.stopPropagation()">
+      <h3 class="text-2xl font-bold mb-6">تعديل الأداة: {{ tool.name }}</h3>
+      
+      <form #toolForm="ngForm" (ngSubmit)="saveTool()">
+        <div class="space-y-4 max-h-[60vh] overflow-y-auto p-2">
+          <div>
+            <label for="tool-name" class="block mb-2 text-sm font-medium">اسم الأداة</label>
+            <input type="text" name="tool-name" [(ngModel)]="tool.name" required class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5">
+          </div>
+          <div>
+            <label for="tool-desc" class="block mb-2 text-sm font-medium">الوصف</label>
+            <textarea name="tool-desc" [(ngModel)]="tool.description" rows="3" required class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5"></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="tool-color" class="block mb-2 text-sm font-medium">لون الأيقونة (Tailwind)</label>
+              <input type="text" name="tool-color" [(ngModel)]="tool.iconColor" required class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 font-mono text-left" dir="ltr">
+            </div>
+             <div>
+              <label for="tool-category" class="block mb-2 text-sm font-medium">فئة الأداة</label>
+              <input type="text" name="tool-category" [(ngModel)]="tool.category" required class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5">
+            </div>
+          </div>
+          <div>
+            <label for="tool-icon" class="block mb-2 text-sm font-medium">مسار أيقونة SVG</label>
+            <textarea name="tool-icon" [(ngModel)]="tool.iconSvg" rows="3" required class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 font-mono text-left" dir="ltr"></textarea>
+          </div>
+        </div>
+        <div class="mt-8 flex justify-end gap-3">
+          <button type="button" (click)="closeToolEditModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-base-200 rounded-lg hover:bg-base-300">
+            إلغاء
+          </button>
+          <button type="submit" [disabled]="toolForm.invalid" class="px-5 py-2.5 text-sm font-medium text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark disabled:bg-gray-400">
+            حفظ التغييرات
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

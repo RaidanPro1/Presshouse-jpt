@@ -1,0 +1,55 @@
+
+<div class="space-y-8 max-w-3xl mx-auto animate-fade-in">
+  <div class="text-center">
+    <h1 class="text-2xl font-bold text-gray-900">الأمن والعمليات (SecOps)</h1>
+    <p class="text-gray-500 mt-2">
+      التحكم في إعدادات الأمان الأساسية للخادم والبوابة الإلكترونية وبروتوكولات الطوارئ.
+    </p>
+  </div>
+
+  <div class="bg-base-200/50 p-6 rounded-xl shadow-inner space-y-6">
+    <h2 class="text-xl font-bold text-gray-900">إعدادات جدار الحماية (Firewall)</h2>
+    <div class="flex items-center justify-between p-4 bg-base-100 rounded-lg">
+      <div>
+        <h3 class="font-semibold text-gray-800">جدار الحماية (UFW)</h3>
+        <p class="text-sm text-gray-500">
+          التحكم في جدار الحماية الأساسي للخادم. يجب أن يبقى نشطاً دائماً.
+        </p>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" [checked]="isUfwActive()" (change)="toggleUfw()" class="sr-only peer">
+        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+        <span class="ms-3 text-sm font-medium text-gray-900">{{ isUfwActive() ? 'نشط' : 'متوقف' }}</span>
+      </label>
+    </div>
+    
+     <h2 class="text-xl font-bold text-gray-900 pt-4">إعدادات البوابة (Gateway)</h2>
+     <div class="flex items-center justify-between p-4 bg-base-100 rounded-lg">
+      <div>
+        <h3 class="font-semibold text-gray-800">ترويسات HSTS</h3>
+        <p class="text-sm text-gray-500">
+          إجبار المتصفحات على استخدام اتصال HTTPS آمن دائماً، مما يمنع هجمات تخفيض مستوى التشفير.
+        </p>
+      </div>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" [checked]="isHstsEnabled()" (change)="toggleHsts()" class="sr-only peer">
+        <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+         <span class="ms-3 text-sm font-medium text-gray-900">{{ isHstsEnabled() ? 'مُفعَّل' : 'مُعطَّل' }}</span>
+      </label>
+    </div>
+
+    <h2 class="text-xl font-bold text-gray-900 pt-4">بروتوكول الطوارئ</h2>
+    <div class="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg">
+      <div>
+        <h3 class="font-semibold text-red-800">تفعيل وضع الطوارئ (Panic Button)</h3>
+        <p class="text-sm text-red-600">
+          سيقوم هذا الإجراء بإيقاف الخدمات العامة وقواعد البيانات فوراً. لا تستخدمه إلا في حالة خطر وشيك.
+        </p>
+      </div>
+      <button (click)="activatePanicMode()" [disabled]="isPanicInProgress()" class="px-5 py-2.5 font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:bg-gray-400">
+        @if(isPanicInProgress()){ <span>جارِ التنفيذ...</span> } @else { <span>تفعيل</span> }
+      </button>
+    </div>
+
+  </div>
+</div>

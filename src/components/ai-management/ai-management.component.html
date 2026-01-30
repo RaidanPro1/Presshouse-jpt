@@ -1,0 +1,66 @@
+
+<section class="space-y-8">
+  <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-ph-yellow pb-2">لوحة عمليات الذكاء الاصطناعي (AI Ops)</h2>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-base-100 p-6 rounded-xl shadow space-y-6">
+          <div>
+            <h3 class="text-xl font-bold text-gray-900">مزود الذكاء الاصطناعي العام</h3>
+            <p class="text-gray-500 mt-1 text-sm">اختر المصدر الذي ستعتمد عليه جميع أدوات الذكاء الاصطناعي في المنصة.</p>
+            <fieldset class="mt-4">
+              <div class="flex gap-4">
+                <label for="ai-google" class="flex-1 relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none" [class.border-ph-blue]="settingsService.aiProvider() === 'google'"><input type="radio" name="ai-provider" id="ai-google" value="google" [checked]="settingsService.aiProvider() === 'google'" (change)="settingsService.aiProvider.set('google')" class="sr-only"><span class="block text-sm font-medium text-gray-900">Google Gemini</span></label>
+                <label for="ai-local" class="flex-1 relative flex cursor-pointer rounded-lg border bg-white p-4 shadow-sm focus:outline-none" [class.border-ph-blue]="settingsService.aiProvider() === 'local'"><input type="radio" name="ai-provider" id="ai-local" value="local" [checked]="settingsService.aiProvider() === 'local'" (change)="settingsService.aiProvider.set('local')" class="sr-only"><span class="block text-sm font-medium text-gray-900">Local AI (Ollama)</span></label>
+              </div>
+            </fieldset>
+          </div>
+           <div class="pt-6 border-t">
+            <h3 class="text-xl font-bold text-gray-900">مختبر هندسة الأوامر (Prompt Engineering)</h3>
+             <p class="text-gray-500 mt-1 text-sm">اختبار وتحديث الأوامر الأساسية للنظام (System Prompts) مباشرة.</p>
+            <textarea class="mt-4 w-full p-2 border rounded-md bg-gray-50 font-mono text-sm" rows="8">You are an expert OSINT assistant named YemenJPT, integrated within a larger platform. Your primary function is to help journalists by running tools...</textarea>
+             <div class="flex justify-end mt-2">
+                <button class="px-4 py-2 text-sm text-white bg-ph-blue rounded-lg">تحديث الأمر الأساسي</button>
+             </div>
+          </div>
+      </div>
+       <div class="bg-base-100 p-6 rounded-xl shadow space-y-6">
+        <h3 class="text-xl font-bold text-gray-900">مركز تدريب النماذج (Model Tuning Hub)</h3>
+         <p class="text-gray-500 mt-1 text-sm">بناء مجموعات بيانات (Datasets) للتدريب وتحسين النموذج المحلي.</p>
+
+         <!-- Dataset Builder -->
+         <div class="p-4 border rounded-lg bg-base-200/50">
+            <h4 class="font-bold text-sm mb-3">إنشاء مجموعة بيانات جديدة</h4>
+            <div class="space-y-3">
+              <input type="text" placeholder="اسم المجموعة (مثلاً: مصطلحات قانونية يمنية)" class="w-full p-2 text-sm border rounded">
+              <textarea placeholder="الصق النص هنا أو التعليمات... (User: سؤال \n Assistant: جواب)" class="w-full p-2 text-sm border rounded h-24 font-mono"></textarea>
+               <label for="dataset-file-upload" class="flex items-center gap-2 cursor-pointer bg-white border p-2 rounded hover:bg-gray-50">
+                  <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                  <span class="text-sm text-gray-600">رفع ملف (PDF/TXT)</span>
+                  <input id="dataset-file-upload" type="file" class="hidden" (change)="handleFileUpload($event)">
+               </label>
+               @if(uploadedFileName()) { <p class="text-xs text-green-600">تم تحديد الملف: {{ uploadedFileName() }}</p> }
+               <button (click)="createDataset()" class="w-full py-2 bg-green-600 text-white rounded text-sm font-bold hover:bg-green-700">إنشاء وتحويل إلى JSONL</button>
+            </div>
+         </div>
+
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start pt-4 border-t">
+            <div>
+              <p class="text-sm text-gray-600 mb-2">بدء عملية تدريب جديدة (Fine-Tuning) باستخدام البيانات المتاحة.</p>
+              <button (click)="startFineTuning()" class="mt-4 w-full px-4 py-2 text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark disabled:bg-gray-400" [disabled]="trainingStatus() !== 'idle'">
+                @if (trainingStatus() === 'idle') { <span>بدء التدريب (Llama 3)</span> } @else { <span>التدريب قيد التنفيذ...</span> }
+              </button>
+            </div>
+             @if (trainingLogs().length > 0 || trainingStatus() !== 'idle') {
+            <div class="p-3 bg-base-200 rounded-lg h-full">
+              <h4 class="font-semibold mb-2 text-sm">سجل التدريب:</h4>
+              <div class="h-48 overflow-y-auto bg-gray-900 text-white font-mono text-xs rounded p-3 space-y-1">
+                @for(log of trainingLogs(); track log) { <p>{{ log }}</p> }
+                @if(trainingStatus() === 'running') {
+                  <p class="flex items-center gap-2"><span>[...جاري التدريب]</span> <svg class="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg></p>
+                }
+              </div>
+            </div>
+          }
+         </div>
+      </div>
+  </div>
+</section>

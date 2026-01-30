@@ -1,0 +1,73 @@
+
+@if (userService.isAuthenticated()) {
+  <app-dashboard-layout 
+    [user]="userService.currentUser()" 
+    [currentPage]="currentPage()" 
+    (navigate)="handleNavigation($event)" 
+    (logout)="handleLogout()">
+  </app-dashboard-layout>
+} @else {
+  <div class="min-h-screen flex flex-col font-sans">
+    <app-header 
+      [isAuthenticated]="false" 
+      (login)="handleLogin()"
+      (navigate)="handleNavigation($event)"></app-header>
+    <main class="flex-grow">
+      @switch (currentPage()) {
+        @case ('home') { <app-home (login)="handleLogin()" (navigate)="handleNavigation($event)"></app-home> }
+        @case ('about') { <app-about-us></app-about-us> }
+        @case ('platform-overview') { <app-platform-overview (login)="handleLogin()"></app-platform-overview> }
+        @case ('manifesto') { <app-manifesto (login)="handleLogin()" (navigate)="handleNavigation($event)"></app-manifesto> }
+        @case ('privacy-policy') { <app-privacy-policy (navigate)="handleNavigation($event)"></app-privacy-policy> }
+        @case ('terms-of-service') { <app-terms-of-service (navigate)="handleNavigation($event)"></app-terms-of-service> }
+        @case ('cookie-policy') { <app-cookie-policy></app-cookie-policy> }
+        @case ('disclaimer') { <app-disclaimer></app-disclaimer> }
+        @case ('register') { <app-register (register)="handleRegister()" (navigate)="handleNavigation($event)"></app-register> }
+        @case ('violations-observatory-public') { <app-violations-observatory-public (login)="handleLogin()"></app-violations-observatory-public> }
+        @case ('news-public') { <app-news-public (login)="handleLogin()"></app-news-public> }
+        @case ('projects-public') { <app-projects-public (login)="handleLogin()"></app-projects-public> }
+        @default { <app-home (login)="handleLogin()" (navigate)="handleNavigation($event)"></app-home> }
+      }
+    </main>
+    <app-footer (navigate)="handleNavigation($event)"></app-footer>
+  </div>
+}
+
+@if (trialService.showLoginModal()) {
+  <app-login-modal (login)="handleLogin()" (close)="trialService.closeModal()" (navigate)="handleNavigation($event)"></app-login-modal>
+}
+
+@if (showOnboarding()) {
+  <app-onboarding (finish)="handleFinishOnboarding()"></app-onboarding>
+}
+
+<!-- Global AI FAB (Visible Everywhere) -->
+<button 
+  (click)="toggleGeminiAssist()"
+  title="YemenJPT - المساعد الذكي"
+  class="fixed bottom-6 right-6 z-50 w-16 h-16 bg-ph-blue text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center justify-center group border-4 border-white/20">
+  <span class="absolute inset-0 rounded-full animate-ping bg-ph-blue opacity-20"></span>
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 group-hover:rotate-12 transition-transform">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
+  </svg>
+</button>
+
+@if (showGeminiAssist()) {
+  <div class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 animate-fade-in-up backdrop-blur-sm" (click)="toggleGeminiAssist()">
+    <div class="bg-base-100 text-gray-800 rounded-lg shadow-2xl w-full max-w-5xl h-[85vh] overflow-hidden flex flex-col border border-gray-200" (click)="$event.stopPropagation()">
+        <div class="p-4 bg-base-200 border-b border-gray-200 flex justify-between items-center">
+             <h3 class="font-bold text-lg text-gray-900 flex items-center gap-2 font-display">
+                YemenJPT Cloud - النواة المعرفية
+             </h3>
+            <button (click)="toggleGeminiAssist()" title="إغلاق" class="text-gray-500 hover:text-gray-800 transition-colors p-2 hover:bg-gray-300 rounded-full">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <div class="flex-grow overflow-hidden">
+            <app-ai-core></app-ai-core>
+        </div>
+    </div>
+  </div>
+}
+
+<app-confirmation-modal></app-confirmation-modal>

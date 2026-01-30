@@ -1,0 +1,121 @@
+
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">نظام تخطيط الموارد (ERP)</h1>
+    <p class="text-gray-500 mt-1">
+      إدارة الموارد المالية، الأصول، والمنح التشغيلية للمؤسسة.
+    </p>
+  </div>
+
+  <!-- Financial Overview Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-base-100 p-6 rounded-xl shadow border-s-4 border-ph-blue">
+      <h3 class="text-gray-500 text-sm font-medium">إجمالي الميزانية (السنوية)</h3>
+      <p class="text-3xl font-bold text-gray-900 mt-2">${{ totalBudget() | number }}</p>
+      <span class="text-xs text-green-600 bg-green-100 px-2 py-1 rounded-full mt-2 inline-block">نشط</span>
+    </div>
+    <div class="bg-base-100 p-6 rounded-xl shadow border-s-4 border-yellow-500">
+      <h3 class="text-gray-500 text-sm font-medium">المصروفات حتى الآن</h3>
+      <p class="text-3xl font-bold text-gray-900 mt-2">${{ totalSpent() | number }}</p>
+      <div class="w-full bg-gray-200 rounded-full h-2.5 mt-3">
+        <div class="h-2.5 rounded-full" [ngClass]="getProgressColor(burnRate())" [style.width.%]="burnRate()"></div>
+      </div>
+      <p class="text-xs text-gray-400 mt-1">معدل الاستهلاك: {{ burnRate() }}%</p>
+    </div>
+    <div class="bg-base-100 p-6 rounded-xl shadow border-s-4 border-purple-500">
+      <h3 class="text-gray-500 text-sm font-medium">الأصول النشطة</h3>
+      <p class="text-3xl font-bold text-gray-900 mt-2">{{ activeAssetsCount() }}</p>
+      <p class="text-xs text-gray-500 mt-2">من أصل {{ assets().length }} أصل مسجل</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Budget Breakdown -->
+    <div class="bg-base-100 p-6 rounded-xl shadow h-full">
+      <h2 class="text-xl font-bold text-gray-800 mb-6">توزيع الميزانية</h2>
+      <div class="space-y-6">
+        @for(budget of budgets(); track budget.category) {
+          <div>
+            <div class="flex justify-between items-end mb-1">
+              <span class="text-sm font-semibold text-gray-700">{{ budget.category }}</span>
+              <span class="text-xs text-gray-500 font-mono">${{ budget.spent | number }} / ${{ budget.allocated | number }}</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-4">
+              <div class="h-4 rounded-full transition-all duration-500" 
+                   [ngClass]="getProgressColor((budget.spent / budget.allocated) * 100)"
+                   [style.width.%]="(budget.spent / budget.allocated) * 100"></div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="bg-base-100 p-6 rounded-xl shadow h-full">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">آخر المعاملات المالية</h2>
+      <div class="overflow-y-auto max-h-[300px] pr-2 space-y-3">
+        @for(trans of transactions(); track trans.id) {
+          <div class="flex items-center justify-between p-3 bg-base-200 rounded-lg">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full flex items-center justify-center" 
+                   [ngClass]="trans.type === 'Income' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'">
+                @if(trans.type === 'Income') {
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" /></svg>
+                }
+              </div>
+              <div>
+                <p class="text-sm font-bold text-gray-800">{{ trans.description }}</p>
+                <p class="text-xs text-gray-500">{{ trans.date }} • {{ trans.category }}</p>
+              </div>
+            </div>
+            <span class="font-mono font-bold" [ngClass]="trans.type === 'Income' ? 'text-green-600' : 'text-red-600'">
+              {{ trans.type === 'Income' ? '+' : '-' }}${{ trans.amount | number }}
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Asset Management -->
+  <div class="bg-base-100 p-6 rounded-xl shadow">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">سجل الأصول والعهد</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-right text-gray-600">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+          <tr>
+            <th class="py-3 px-6">ID</th>
+            <th class="py-3 px-6">اسم الأصل</th>
+            <th class="py-3 px-6">النوع</th>
+            <th class="py-3 px-6">المسؤول (العهدة)</th>
+            <th class="py-3 px-6">تاريخ الشراء</th>
+            <th class="py-3 px-6">الحالة</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(asset of assets(); track asset.id) {
+            <tr class="bg-white border-b hover:bg-gray-50">
+              <td class="py-3 px-6 font-mono font-semibold">{{ asset.id }}</td>
+              <td class="py-3 px-6 text-gray-900">{{ asset.name }}</td>
+              <td class="py-3 px-6">{{ asset.type }}</td>
+              <td class="py-3 px-6">{{ asset.assignedTo }}</td>
+              <td class="py-3 px-6">{{ asset.purchaseDate }}</td>
+              <td class="py-3 px-6">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full" 
+                      [ngClass]="{
+                        'bg-green-100 text-green-800': asset.status === 'Active',
+                        'bg-yellow-100 text-yellow-800': asset.status === 'Maintenance',
+                        'bg-gray-100 text-gray-800': asset.status === 'Retired'
+                      }">
+                  {{ asset.status }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

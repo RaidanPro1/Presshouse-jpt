@@ -1,0 +1,73 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">أدوات الأتمتة وسير العمل</h1>
+    <p class="text-gray-500 mt-1">
+      أدوات متقدمة لربط الخدمات، أتمتة المهام المتكررة، وتحليل البيانات بشكل برمجي. (خاص بالمسؤولين)
+    </p>
+  </div>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4 text-gray-800">الأدوات المتاحة</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (tool of automationTools(); track tool.id) {
+        <app-tool-card 
+          [tool]="tool" 
+          [userRole]="user()?.role ?? 'guest'"
+          (toggleStatus)="handleToolToggle($event)"
+          (toggleFavorite)="handleToggleFavorite($event)"></app-tool-card>
+      }
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">نماذج أتمتة للعمل الصحفي</h2>
+    <p class="text-gray-500 mb-6">
+      استخدم هذه الأفكار كنقطة انطلاق لبناء تدفقات عمل قوية في <a href="http://localhost:5678" target="_blank" class="text-ph-blue font-semibold hover:underline">n8n</a> لربط أدوات المنصة وأتمتة تحقيقاتك.
+    </p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <!-- Template 1: Website Monitoring -->
+      <div class="bg-base-100 p-5 rounded-xl shadow-md border border-gray-200">
+        <h3 class="font-bold text-lg text-ph-blue mb-2">مراقبة المواقع الحكومية</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          أتمتة عملية رصد التغييرات في بيانات الميزانية أو القرارات الرسمية على مواقع الوزارات.
+        </p>
+        <ol class="text-xs space-y-2">
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">1</span> <strong>الرصد:</strong> استخدم <span class="font-mono bg-gray-200 px-1 rounded">ChangeDetection.io</span> لمراقبة صفحة محددة.</li>
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">2</span> <strong>الأرشفة:</strong> عند اكتشاف تغيير، أرسل الرابط إلى <span class="font-mono bg-gray-200 px-1 rounded">ArchiveBox</span> لحفظ نسخة.</li>
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">3</span> <strong>التحليل:</strong> أرسل النص الجديد والقديم إلى <span class="font-mono bg-gray-200 px-1 rounded">AI Core</span> لتلخيص الفروقات.</li>
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">4</span> <strong>التنبيه:</strong> انشر ملخص الفروقات ورابط الأرشيف في قناة الفريق على <span class="font-mono bg-gray-200 px-1 rounded">Mattermost</span>.</li>
+        </ol>
+      </div>
+
+      <!-- Template 2: Social Media Analysis -->
+      <div class="bg-base-100 p-5 rounded-xl shadow-md border border-gray-200">
+        <h3 class="font-bold text-lg text-ph-blue mb-2">تحليل التوجهات على تويتر</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          إنشاء تقرير يومي عن المشاعر والتوجهات حول قضية معينة (مثل انقطاع الإنترنت) في مدينة محددة.
+        </p>
+        <ol class="text-xs space-y-2">
+           <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">1</span> <strong>الجمع:</strong> كل 24 ساعة، استخدم <span class="font-mono bg-gray-200 px-1 rounded">Snscrape</span> لجمع التغريدات التي تحتوي على كلمات مفتاحية معينة.</li>
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">2</span> <strong>التخزين:</strong> احفظ التغريدات المجمعة في جدول داخل <span class="font-mono bg-gray-200 px-1 rounded">NocoDB</span> للتحليل المستقبلي.</li>
+           <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">3</span> <strong>التلخيص:</strong> أرسل عينة من 100 تغريدة إلى <span class="font-mono bg-gray-200 px-1 rounded">AI Core</span> لإنشاء ملخص للتوجهات والمشاعر السائدة.</li>
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">4</span> <strong>النشر:</strong> أرسل الملخص اليومي تلقائياً عبر البريد الإلكتروني إلى فريق التحقيق.</li>
+        </ol>
+      </div>
+
+      <!-- Template 3: Violation Triage -->
+      <div class="bg-base-100 p-5 rounded-xl shadow-md border border-gray-200">
+        <h3 class="font-bold text-lg text-ph-blue mb-2">فرز بلاغات الانتهاكات</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          أتمتة عملية استقبال وتصنيف البلاغات الواردة من الجمهور عبر <span class="font-mono bg-gray-200 px-1 rounded">Chatwoot</span>.
+        </p>
+        <ol class="text-xs space-y-2">
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">1</span> <strong>الاستقبال:</strong> عند وصول رسالة جديدة في <span class="font-mono bg-gray-200 px-1 rounded">Chatwoot</span>، قم بتشغيل سير العمل.</li>
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">2</span> <strong>التصنيف:</strong> أرسل نص الرسالة إلى <span class="font-mono bg-gray-200 px-1 rounded">AI Core</span> لتحديد نوع الانتهاك (قتل، اعتقال) والمحافظة.</li>
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">3</span> <strong>التسجيل:</strong> قم بإنشاء سجل مبدئي في قاعدة بيانات الانتهاكات في <span class="font-mono bg-gray-200 px-1 rounded">NocoDB</span> مع حالة "يحتاج مراجعة".</li>
+          <li class="flex items-start"><span class="bg-ph-blue text-white rounded-full w-4 h-4 text-center leading-4 me-2">4</span> <strong>الإسناد:</strong> قم بإسناد مهمة مراجعة البلاغ إلى الصحفي المناوب في أداة إدارة المشاريع.</li>
+        </ol>
+      </div>
+
+    </div>
+  </section>
+</div>

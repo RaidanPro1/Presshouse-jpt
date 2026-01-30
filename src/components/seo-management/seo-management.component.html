@@ -1,0 +1,65 @@
+<div class="space-y-8 max-w-3xl mx-auto animate-fade-in">
+  <div class="text-center">
+    <h1 class="text-2xl font-bold text-gray-900">إدارة الظهور على محركات البحث (SEO)</h1>
+    <p class="text-gray-500 mt-2">
+      تحكم في كيفية ظهور المنصة على محركات البحث مثل Google لتحسين الوصول وجذب الجمهور المستهدف.
+    </p>
+  </div>
+
+  <div class="bg-base-200/50 p-6 rounded-xl shadow-inner space-y-6">
+    <div>
+      <label for="seo-title" class="block mb-2 text-sm font-medium text-gray-800">عنوان الصفحة الرئيسي (Title)</label>
+      <input 
+        type="text" 
+        id="seo-title"
+        [(ngModel)]="title"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-ph-blue focus:border-ph-blue block w-full p-2.5"
+        placeholder="YemenJPT OSINT Platform">
+      <p class="mt-1 text-xs text-gray-500">يظهر في تبويب المتصفح وكنتيجة رئيسية في البحث. (يفضل أن يكون أقل من 60 حرفًا)</p>
+    </div>
+
+    <div>
+      <label for="seo-description" class="block mb-2 text-sm font-medium text-gray-800">الوصف التعريفي (Meta Description)</label>
+      <textarea 
+        id="seo-description"
+        [(ngModel)]="description"
+        rows="4" 
+        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-ph-blue focus:border-ph-blue" 
+        placeholder="منصة استخبارات مفتوحة المصدر للصحفيين..."></textarea>
+      <p class="mt-1 text-xs text-gray-500">ملخص قصير ومقنع للمحتوى. يظهر تحت العنوان في نتائج البحث. (يفضل أن يكون أقل من 160 حرفًا)</p>
+    </div>
+
+    <div>
+      <label for="seo-keywords" class="block mb-2 text-sm font-medium text-gray-800">الكلمات المفتاحية (Keywords)</label>
+      <input 
+        type="text" 
+        id="seo-keywords"
+        [(ngModel)]="keywords"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-ph-blue focus:border-ph-blue block w-full p-2.5" 
+        placeholder="OSINT, Yemen, Journalism, Investigation...">
+      <p class="mt-1 text-xs text-gray-500">كلمات وعبارات يفصل بينها بفاصلة (,) تصف محتوى المنصة.</p>
+    </div>
+  </div>
+
+  <div class="flex justify-end">
+    <button (click)="saveSeoSettings()" class="px-6 py-2.5 font-semibold text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark focus:outline-none focus:ring-4 focus:ring-ph-blue/50 flex items-center justify-center w-36 transition-all duration-200" [disabled]="saveStatus() === 'saving'">
+      @switch (saveStatus()) {
+        @case ('idle') {
+          <span>حفظ التغييرات</span>
+        }
+        @case ('saving') {
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        }
+        @case ('saved') {
+          <span class="flex items-center">
+             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 me-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+            تم الحفظ!
+          </span>
+        }
+      }
+    </button>
+  </div>
+</div>

@@ -1,0 +1,176 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">مرصد الانتهاكات الصحفية</h1>
+    <p class="text-gray-500 mt-1">
+      سير عمل متكامل لتوثيق، تحليل، وعرض الانتهاكات بحق الصحفيين والمؤسسات الإعلامية في اليمن.
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-200">
+    <nav class="-mb-px flex space-i-6" aria-label="Tabs">
+      <button (click)="setTab('dashboard')" [class]="activeTab() === 'dashboard' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">
+        لوحة المعلومات
+      </button>
+      <button (click)="setTab('database')" [class]="activeTab() === 'database' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">
+        قاعدة البيانات
+      </button>
+      <button (click)="setTab('map')" [class]="activeTab() === 'map' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">
+        الخريطة التفاعلية
+      </button>
+      <button (click)="setTab('report')" [class]="activeTab() === 'report' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">
+        تقديم بلاغ جديد
+      </button>
+    </nav>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="mt-6">
+    @switch (activeTab()) {
+      @case ('dashboard') {
+        <div class="space-y-8">
+          <!-- Stats -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div class="bg-base-100 p-6 rounded-xl shadow">
+                  <p class="text-sm text-gray-500">إجمالي الانتهاكات الموثقة</p>
+                  <p class="text-3xl font-bold text-red-600">{{ stats().total }}</p>
+              </div>
+              <div class="bg-base-100 p-6 rounded-xl shadow">
+                  <p class="text-sm text-gray-500">انتهاكات هذا الشهر</p>
+                  <p class="text-3xl font-bold text-gray-900">{{ stats().thisMonth }}</p>
+              </div>
+              <div class="bg-base-100 p-6 rounded-xl shadow">
+                  <p class="text-sm text-gray-500">أكثر المحافظات خطورة</p>
+                  <p class="text-2xl font-bold text-gray-900">{{ stats().mostDangerous }}</p>
+              </div>
+          </div>
+          <!-- Charts -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="bg-base-100 p-6 rounded-xl shadow">
+              <h3 class="font-bold text-lg mb-4">الانتهاكات حسب السنة</h3>
+              <div class="space-y-2">
+                @for(item of violationsByYear; track item.year){
+                  <div class="flex items-center">
+                    <span class="w-16 text-sm text-gray-600">{{ item.year }}</span>
+                    <div class="flex-grow bg-gray-200 rounded-full h-6">
+                      <div class="bg-ph-blue h-6 rounded-full text-white text-xs flex items-center justify-center" [style.width.%]="(item.count / 410) * 100">
+                        {{ item.count }}
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+             <div class="bg-base-100 p-6 rounded-xl shadow">
+              <h3 class="font-bold text-lg mb-4">الانتهاكات حسب النوع</h3>
+              <div class="space-y-2">
+                @for(item of violationsByType(); track item.type){
+                  <div class="flex items-center">
+                    <span class="w-20 text-sm text-gray-600">{{ item.type }}</span>
+                    <div class="flex-grow bg-gray-200 rounded-full h-4">
+                      <div class="h-4 rounded-full" [ngClass]="item.color" [style.width.%]="(item.count / 450) * 100"></div>
+                    </div>
+                     <span class="w-12 text-sm text-gray-600 text-left">{{ item.count }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+             <div class="bg-base-100 p-6 rounded-xl shadow">
+              <h3 class="font-bold text-lg mb-4">الانتهاكات حسب المحافظة</h3>
+              <div class="space-y-2">
+                @for(item of violationsByGovernorate(); track item.name){
+                  <div class="flex items-center">
+                    <span class="w-20 text-sm text-gray-600">{{ item.name }}</span>
+                    <div class="flex-grow bg-gray-200 rounded-full h-6">
+                      <div class="bg-orange-500 h-6 rounded-full text-white text-xs flex items-center justify-center" [style.width.%]="(item.count / 250) * 100">
+                        {{ item.count }}
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="bg-base-100 p-6 rounded-xl shadow">
+              <h3 class="font-bold text-lg mb-4">الانتهاكات حسب الجهة المنتهكة</h3>
+              <div class="flex flex-col xl:flex-row items-center gap-4 h-full">
+                <div class="relative w-32 h-32 flex-shrink-0">
+                  <svg class="w-full h-full" viewBox="0 0 120 120">
+                    @for(segment of perpetratorChartData(); track segment.name) {
+                      <circle 
+                        cx="60" cy="60" r="54" fill="none" stroke-width="12"
+                        [attr.stroke-dasharray]="segment.strokeDasharray"
+                        [attr.stroke-dashoffset]="segment.strokeDashoffset"
+                        [attr.transform]="'rotate(' + segment.rotation + ' 60 60)'"
+                        [class]="segment.color">
+                      </circle>
+                    }
+                  </svg>
+                  <div class="absolute inset-0 flex items-center justify-center text-center">
+                      <span class="text-xl font-bold">{{ stats().total }}<br><span class="text-xs font-bold text-gray-500">انتهاك</span></span>
+                  </div>
+                </div>
+                <div class="space-y-1 text-xs w-full">
+                  @for(item of perpetratorChartData(); track item.name){
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center">
+                        <span class="w-2 h-2 rounded-sm ms-2" [class]="item.legendColor"></span>
+                        <span class="truncate" [title]="item.name">{{ item.name }}</span>
+                      </div>
+                      <span class="font-semibold text-gray-800">{{ item.percentage }}%</span>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+      @case ('database') {
+        <div class="bg-base-100 p-4 rounded-xl shadow overflow-x-auto">
+          <table class="w-full text-sm text-right text-gray-600">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                <tr>
+                    <th scope="col" class="py-3 px-6">القضية</th>
+                    <th scope="col" class="py-3 px-6">الصحفي</th>
+                    <th scope="col" class="py-3 px-6">المحافظة</th>
+                    <th scope="col" class="py-3 px-6">التاريخ</th>
+                    <th scope="col" class="py-3 px-6">الجهة المنتهكة</th>
+                    <th scope="col" class="py-3 px-6">الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for(v of filteredViolations(); track v.id) {
+                  <tr class="bg-white border-b hover:bg-gray-50 cursor-pointer">
+                      <td class="py-4 px-6 font-medium text-gray-900">{{ v.case }}</td>
+                      <td class="py-4 px-6">{{ v.journalist }}</td>
+                      <td class="py-4 px-6">{{ v.governorate }}</td>
+                      <td class="py-4 px-6">{{ v.date }}</td>
+                      <td class="py-4 px-6">{{ v.perpetrator }}</td>
+                      <td class="py-4 px-6">
+                        <span class="text-xs font-semibold px-2.5 py-1 rounded-full" [ngClass]="{
+                          'bg-green-100 text-green-800': v.status === 'Verified',
+                          'bg-yellow-100 text-yellow-800': v.status === 'Pending',
+                          'bg-gray-100 text-gray-800': v.status === 'Closed'
+                        }">{{ v.status }}</span>
+                      </td>
+                  </tr>
+                }
+            </tbody>
+          </table>
+        </div>
+      }
+      @case ('map') {
+        <div class="bg-base-100 p-4 rounded-xl shadow flex items-center justify-center h-96">
+          <div class="text-center text-gray-400">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mx-auto mb-2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503-6.938l4.25-2.287a.75.75 0 0 1 1.002.868l-3.585 6.669a.75.75 0 0 1-1.218.153l-1.306-2.176a.75.75 0 0 0-1.218-.153l-1.559 2.598a.75.75 0 0 1-1.218.153l-2.529-4.215a.75.75 0 0 1 .393-1.285l4.25-2.287a.75.75 0 0 1 1.002.868Z" /></svg>
+              <p class="font-semibold">خريطة تفاعلية للانتهاكات</p>
+              <p class="text-xs">سيتم عرض البيانات الجغرافية هنا عبر Ushahidi/Kepler.gl</p>
+          </div>
+        </div>
+      }
+      @case ('report') {
+        <app-violation-report-form></app-violation-report-form>
+      }
+    }
+  </div>
+</div>

@@ -1,0 +1,211 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">بوابة إدارة المشاريع المؤسسية</h1>
+    <p class="text-gray-500 mt-1">
+      لوحة تحكم مركزية لمتابعة المشاريع، إدارة الموارد، وتحليل أداء المؤسسة.
+    </p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-200">
+    <nav class="-mb-px flex space-i-6" aria-label="Tabs">
+      <button (click)="setTab('overview')" [class]="activeTab() === 'overview' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.012-1.244h3.859M12 3v10.5m-4.5-4.5-4.5 4.5M16.5 9l4.5 4.5" /></svg>
+        نظرة عامة
+      </button>
+       <button (click)="setTab('calendar')" [class]="activeTab() === 'calendar' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm flex items-center gap-2">
+         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0h18" /></svg>
+        التقويم والجداول الزمنية
+      </button>
+       <button (click)="setTab('resources')" [class]="activeTab() === 'resources' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm flex items-center gap-2">
+         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-4.683c.65-.935 1-2.104 1-3.328M3 4.5a5.25 5.25 0 0 1 10.5 0v.75a5.25 5.25 0 0 1-10.5 0v-.75Z" /></svg>
+        الموارد والمالية
+      </button>
+       <button (click)="setTab('reports')" [class]="activeTab() === 'reports' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm flex items-center gap-2">
+         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+        التقارير
+      </button>
+    </nav>
+  </div>
+  
+  <!-- Tab Content -->
+  @switch (activeTab()) {
+    @case ('overview') {
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 space-y-8">
+          <!-- KPI Section -->
+          <section>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+              <div class="bg-base-100 p-6 rounded-xl shadow flex items-center gap-4">
+                <div class="relative w-24 h-24 flex-shrink-0">
+                  <svg class="w-full h-full transform -rotate-90"><circle class="text-gray-200" stroke-width="10" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48"/><circle class="text-ph-blue" stroke-width="10" [attr.stroke-dasharray]="circumference" [attr.stroke-dashoffset]="progressStrokeOffset()" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48"/></svg>
+                  <div class="absolute inset-0 flex items-center justify-center"><span class="text-xl font-bold text-ph-blue">{{ overallProgress() }}%</span></div>
+                </div>
+                <div><p class="font-bold text-gray-800">التقدم العام</p><p class="text-sm text-gray-500">للمشاريع النشطة</p></div>
+              </div>
+              <div class="bg-base-100 p-6 rounded-xl shadow flex items-center gap-4">
+                <div class="relative w-24 h-24 flex-shrink-0">
+                  <svg class="w-full h-full transform -rotate-90"><circle class="text-gray-200" stroke-width="10" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48"/><circle class="text-yellow-500" stroke-width="10" [attr.stroke-dasharray]="circumference" [attr.stroke-dashoffset]="budgetStrokeOffset()" stroke-linecap="round" stroke="currentColor" fill="transparent" r="40" cx="48" cy="48"/></svg>
+                  <div class="absolute inset-0 flex items-center justify-center"><span class="text-xl font-bold text-yellow-600">{{ budgetPercentage() }}%</span></div>
+                </div>
+                <div><p class="font-bold text-gray-800">الميزانية المصروفة</p><p class="text-sm text-gray-500">من الإجمالي</p></div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Projects List -->
+          <div class="bg-base-100 p-6 rounded-xl shadow">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-bold">نظرة عامة على المشاريع</h2>
+              <div class="flex items-center gap-1 p-1 bg-base-200 rounded-lg">
+                <button (click)="setFilterStatus('all')" [class]="filterStatus() === 'all' ? 'bg-white shadow' : 'text-gray-500'" class="px-3 py-1 text-sm font-semibold rounded-md transition-colors">الكل</button>
+                <button (click)="setFilterStatus('On Track')" [class]="filterStatus() === 'On Track' ? 'bg-white shadow' : 'text-gray-500'" class="px-3 py-1 text-sm font-semibold rounded-md transition-colors">في المسار</button>
+                <button (click)="setFilterStatus('At Risk')" [class]="filterStatus() === 'At Risk' ? 'bg-white shadow' : 'text-gray-500'" class="px-3 py-1 text-sm font-semibold rounded-md transition-colors">في خطر</button>
+                <button (click)="setFilterStatus('Off Track')" [class]="filterStatus() === 'Off Track' ? 'bg-white shadow' : 'text-gray-500'" class="px-3 py-1 text-sm font-semibold rounded-md transition-colors">خارج المسار</button>
+              </div>
+            </div>
+            <div class="space-y-4">
+              @for(project of filteredProjects(); track project.id) {
+                <div>
+                  <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-1">
+                    <span class="text-base font-medium text-ph-blue">{{ project.name }}</span>
+                    <div class="flex items-center gap-4">
+                      <div class="flex -space-x-2">
+                         @for(member of project.team; track member.name){ <img [src]="member.avatar" [alt]="member.name" class="w-6 h-6 rounded-full border-2 border-white"> }
+                      </div>
+                      <span class="text-xs text-gray-500">موعد التسليم: {{ project.dueDate }}</span>
+                      <span class="text-sm font-medium" [class.text-green-600]="project.status === 'On Track'" [class.text-yellow-600]="project.status === 'At Risk'" [class.text-red-600]="project.status === 'Off Track'">{{ project.status === 'On Track' ? 'في المسار الصحيح' : (project.status === 'At Risk' ? 'في خطر' : 'خارج المسار') }}</span>
+                    </div>
+                  </div>
+                  <div class="w-full bg-gray-200 rounded-full h-4 relative">
+                    <div class="bg-ph-blue h-4 rounded-full" [style.width.%]="project.progress"></div>
+                    <span class="absolute inset-0 text-white text-xs font-bold flex items-center justify-center">{{ project.progress }}%</span>
+                  </div>
+                </div>
+              } @empty {
+                <div class="text-center py-8 text-gray-500">
+                  <p>لا توجد مشاريع تطابق هذا الفلتر.</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-1 space-y-8">
+            <div class="bg-base-100 p-6 rounded-xl shadow">
+              <h2 class="text-xl font-bold mb-4">آخر النشاطات</h2>
+              <ul class="space-y-4">
+                @for(activity of recentActivities(); track $index) {
+                    <li class="flex items-start gap-3">
+                        <img [src]="activity.user.avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                        <div>
+                          <p class="text-sm text-gray-600">
+                              <span class="font-semibold text-gray-800">{{ activity.user.name }}</span>
+                              {{ activity.action }}
+                              <span class="font-semibold text-ph-blue">"{{ activity.target }}"</span>
+                              في مشروع "{{ activity.project }}"
+                          </p>
+                           <p class="text-xs text-gray-400 mt-1">{{ activity.timestamp }}</p>
+                        </div>
+                    </li>
+                }
+              </ul>
+            </div>
+        </div>
+        <div class="lg:col-span-3">
+            <!-- Tools Section -->
+            <section>
+              <h2 class="text-xl font-bold mb-4">أدوات إدارة المشاريع</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @for (tool of portalTools(); track tool.id) {
+                  <app-tool-card [tool]="tool" [userRole]="user()?.role ?? 'guest'" (toggleStatus)="handleToolToggle($event)" (toggleFavorite)="handleToggleFavorite($event)" (runTool)="handleRunTool($event)"></app-tool-card>
+                }
+              </div>
+            </section>
+        </div>
+      </div>
+    }
+    @case ('calendar') {
+      <div class="bg-base-100 p-6 rounded-xl shadow">
+          <div class="flex justify-between items-center mb-4">
+            <button (click)="prevMonth()" class="p-2 rounded-full hover:bg-gray-100">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+            </button>
+            <h2 class="text-2xl font-bold text-center">{{ currentMonth().toLocaleString('ar-EG', { month: 'long', year: 'numeric' }) }}</h2>
+            <button (click)="nextMonth()" class="p-2 rounded-full hover:bg-gray-100">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+            </button>
+          </div>
+          <div class="grid grid-cols-7 gap-px bg-gray-200 border border-gray-200">
+              @for(day of ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت']; track day) {
+                <div class="bg-gray-100 text-center text-sm font-semibold py-2">{{ day }}</div>
+              }
+              @for(day of calendarDays(); track $index) {
+                <div class="bg-white p-2 h-32 overflow-y-auto" [class.bg-ph-blue-light]="day && isToday(day)">
+                    @if(day) {
+                      <span class="text-sm font-bold" [class.text-ph-blue]="isToday(day)">{{ day.getDate() }}</span>
+                      @for(event of getEventsForDay(day); track event.title) {
+                        <div class="mt-1 p-1 rounded-md text-xs text-white" [class.bg-red-500]="event.type === 'deadline'" [class.bg-blue-500]="event.type === 'milestone'">{{ event.title }}</div>
+                      }
+                    }
+                </div>
+              }
+          </div>
+      </div>
+    }
+     @case ('resources') {
+        <div class="space-y-8">
+            <div class="bg-base-100 p-6 rounded-xl shadow">
+              <h2 class="text-xl font-bold mb-4">استغلال الموارد (الفريق)</h2>
+              <div class="space-y-4">
+                @for(resource of resources(); track resource.name){
+                  <div>
+                    <div class="flex items-center gap-3 mb-1">
+                      <img [src]="resource.avatar" [alt]="resource.name" class="w-8 h-8 rounded-full">
+                      <span class="font-semibold">{{ resource.name }}</span>
+                      <span class="ms-auto text-sm font-bold">{{ resource.capacity }}%</span>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4">
+                      <div class="bg-green-500 h-4 rounded-full" [style.width.%]="resource.capacity"></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+             <div class="bg-base-100 p-6 rounded-xl shadow">
+              <h2 class="text-xl font-bold mb-4">توزيع الميزانيات</h2>
+              <div class="space-y-6">
+                 @for(project of projects(); track project.id) {
+                    <div>
+                      <div class="flex justify-between items-center mb-1">
+                        <h3 class="font-semibold">{{project.name}}</h3>
+                        <span class="text-sm font-mono text-gray-600">
+                          ${{ (project.budget.spent / 1000).toFixed(0) }}K / ${{ (project.budget.total / 1000).toFixed(0) }}K
+                        </span>
+                      </div>
+                      <div class="w-full bg-gray-200 rounded-full h-6 flex overflow-hidden">
+                          <div class="bg-yellow-500 h-6 text-white text-xs flex items-center justify-center transition-all duration-500" [style.width.%]="(project.budget.spent / project.budget.total) * 100">
+                              <span class="px-1">مصروف</span>
+                          </div>
+                          <div class="bg-gray-200 h-6 text-gray-600 text-xs flex items-center justify-center flex-grow" [style.width.%]="100 - (project.budget.spent / project.budget.total) * 100">
+                              <span class="px-1">متبقي</span>
+                          </div>
+                      </div>
+                    </div>
+                 }
+              </div>
+            </div>
+        </div>
+    }
+     @case ('reports') {
+       <div class="bg-base-100 p-6 rounded-xl shadow text-center">
+            <h2 class="text-2xl font-bold mb-4">إنشاء التقارير</h2>
+            <p class="text-gray-600 mb-8">اختر نوع التقرير الذي تريد إنشاؤه.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <button class="p-6 bg-base-200 rounded-lg hover:bg-gray-200 transition-colors"><span class="font-semibold">تقرير الأداء الربعي</span></button>
+                <button class="p-6 bg-base-200 rounded-lg hover:bg-gray-200 transition-colors"><span class="font-semibold">ملخص الميزانية السنوي</span></button>
+                <button class="p-6 bg-base-200 rounded-lg hover:bg-gray-200 transition-colors"><span class="font-semibold">تقرير استغلال الموارد</span></button>
+            </div>
+       </div>
+    }
+  }
+</div>

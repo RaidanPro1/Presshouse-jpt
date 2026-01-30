@@ -1,0 +1,36 @@
+# dashy-verifier.yml - لوحة تحكم ضابط التحقق
+pageInfo:
+  title: OSINT & Verification Lab
+  description: Tools for deep investigation and fact-checking
+sections:
+  - name: OSINT Toolkit
+    icon: fas fa-user-secret
+    items:
+      - title: OSINT Automation
+        description: SpiderFoot for automated intelligence gathering
+        icon: hl-spider
+        url: "https://spiderfoot.${DOMAIN}"
+      - title: Social Analyzer
+        description: Analyze digital footprints across 1000+ platforms
+        icon: hl-users
+        url: "https://analyzer.${DOMAIN}"
+      - title: Secure Search
+        description: Private meta-search with SearXNG
+        icon: hl-search
+        url: "https://search.${DOMAIN}"
+
+  - name: Verification & Archiving
+    icon: fas fa-check-double
+    items:
+      - title: Meedan Check
+        description: Collaborative fact-checking platform
+        icon: hl-check-circle
+        url: "https://check.${DOMAIN}"
+      - title: Permanent Web Archive
+        description: ArchiveBox for saving web evidence
+        icon: hl-archive-box
+        url: "https://archive.${DOMAIN}"
+      - title: Website Monitoring
+        description: Track changes on any website
+        icon: hl-eye
+        url: "https://watch.${DOMAIN}"

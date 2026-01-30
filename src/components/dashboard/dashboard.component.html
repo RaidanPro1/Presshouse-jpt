@@ -1,0 +1,77 @@
+
+<div class="h-full flex flex-col">
+  <!-- Combined Tab Bar -->
+  <nav class="flex-shrink-0 border-b border-gray-200">
+    <ul class="flex items-center -mb-px overflow-x-auto">
+      <!-- Main Dashboard Tabs -->
+      @for(tab of dashboardTabs; track tab.key) {
+        <li 
+          (click)="selectTab(tab.key)" 
+          class="cursor-pointer flex items-center gap-2 px-4 py-3 border-b-2 text-sm font-medium flex-shrink-0"
+          [class]="activeTabId() === tab.key ? 'border-ph-blue text-ph-blue font-bold' : 'border-transparent text-gray-500 hover:text-gray-700'">
+          {{ tab.name }}
+        </li>
+      }
+      <!-- Separator -->
+      @if (toolStateService.openTools().length > 0) {
+        <li class="h-6 w-px bg-gray-200 mx-2"></li>
+      }
+      <!-- Open Tool Tabs -->
+      @for(tool of toolStateService.openTools(); track tool.id) {
+        <li 
+          (click)="selectTab(tool.id)" 
+          class="cursor-pointer flex items-center gap-2 px-4 py-3 border-b-2 text-sm font-medium flex-shrink-0" 
+          [class]="activeTabId() === tool.id ? 'border-ph-blue text-ph-blue font-bold' : 'border-transparent text-gray-500 hover:text-gray-700'">
+          <span>{{ tool.name }}</span>
+          <button (click)="closeToolTab(tool.id, $event)" class="text-gray-400 hover:text-gray-700 rounded-full p-0.5 hover:bg-gray-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Tab Content -->
+  <div class="flex-grow pt-1 min-h-0">
+    @switch (activeTabId()) {
+      @case('canvas') {
+        <div class="h-full flex flex-col gap-8 animate-fade-in p-6">
+          <section class="dashboard-hero-bg text-gray-800 p-8 rounded-lg shadow-lg flex-shrink-0 border border-gray-200 text-center relative overflow-hidden">
+             <div class="absolute inset-0 bg-grid-pattern opacity-10"></div>
+            <h1 class="text-5xl font-extrabold tracking-tight relative z-10 font-display">
+                <span class="text-gray-900">Yemen</span><span class="text-ph-yellow">JPT</span>
+            </h1>
+            <p class="mt-2 text-gray-600 max-w-2xl mx-auto relative z-10">
+              بيئة عملك الرقمية السيادية. ابدأ بسحب أداة إلى اللوحة، أو اطلب من المساعد الذكي بناء سير عمل لك.
+            </p>
+            <div class="mt-6 flex justify-center gap-4 relative z-10">
+            </div>
+          </section>
+          <section class="flex-grow min-h-0">
+            <app-investigation-canvas></app-investigation-canvas>
+          </section>
+        </div>
+      }
+      @case('violations-observatory') { <app-violations-observatory></app-violations-observatory> }
+      @case('training') { <app-training-portal></app-training-portal> }
+      @case('tech-support') { <app-tech-support-portal></app-tech-support-portal> }
+      
+      @default {
+        @switch (activeTabId()) {
+            @case('ai-assistant') { <app-ai-core></app-ai-core> }
+            @case('searxng') { <app-searxng></app-searxng> }
+            @default {
+              @if (getToolById(activeTabId()); as tool) {
+                <app-placeholder [pageTitle]="tool.name"></app-placeholder>
+              }
+            }
+        }
+      }
+    }
+  </div>
+</div>
+<style>
+.dashboard-hero-bg {
+  background-color: #ffffff;
+}
+</style>

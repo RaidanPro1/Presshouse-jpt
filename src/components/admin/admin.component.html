@@ -1,0 +1,93 @@
+<div class="space-y-8 animate-fade-in text-gray-800">
+  <header>
+    <h1 class="text-3xl font-bold text-gray-900">التحكم الإداري</h1>
+    <p class="text-gray-500 mt-1">إدارة شاملة لمنصة YemenJPT، من هنا يمكنك التحكم في الأدوات، المستخدمين، وحالة النظام.</p>
+  </header>
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-200">
+    <nav class="-mb-px flex space-i-6 overflow-x-auto" aria-label="Tabs">
+      <button (click)="activeTab.set('general')" [class]="activeTab() === 'general' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">عام</button>
+      <button (click)="activeTab.set('users')" [class]="activeTab() === 'users' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">المستخدمون</button>
+      <button (click)="activeTab.set('tools')" [class]="activeTab() === 'tools' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">الأدوات</button>
+      <button (click)="activeTab.set('content')" [class]="activeTab() === 'content' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">إدارة المحتوى</button>
+      <button (click)="activeTab.set('layout')" [class]="activeTab() === 'layout' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">تخصيص الواجهات</button>
+      @if (isRoot()) {
+        <button (click)="activeTab.set('haqiqa')" [class]="activeTab() === 'haqiqa' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">إدارة "حقيقة"</button>
+        <button (click)="activeTab.set('ai-ops')" [class]="activeTab() === 'ai-ops' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">عمليات الذكاء الاصطناعي</button>
+        <button (click)="activeTab.set('email')" [class]="activeTab() === 'email' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">إدارة البريد</button>
+        <button (click)="activeTab.set('logs')" [class]="activeTab() === 'logs' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">سجل التدقيق</button>
+        <button (click)="activeTab.set('security')" [class]="activeTab() === 'security' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-4 px-2 border-b-2 font-medium text-sm">الأمن والعمليات</button>
+      }
+    </nav>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="pt-4">
+    @switch (activeTab()) {
+      @case ('general') {
+        <section class="space-y-8">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-ph-yellow pb-2">النظام والبنية التحتية</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="lg:col-span-2 bg-base-100 p-6 rounded-xl border border-gray-200">
+                <h3 class="text-xl font-bold mb-4">إدارة ومراقبة الخدمات</h3>
+                <app-system-stats></app-system-stats>
+              </div>
+              @if (isRoot()) {
+                <div class="bg-base-100 p-6 rounded-xl border border-gray-200">
+                  <h3 class="text-xl font-bold mb-4">مفاتيح API</h3>
+                  <app-api-key-management></app-api-key-management>
+                </div>
+              }
+            </div>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b-2 border-ph-yellow pb-2">المظهر والخدمات الإعلامية</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="bg-base-100 p-6 rounded-xl border border-gray-200">
+                  <app-theme-management></app-theme-management>
+              </div>
+              <div class="bg-base-100 p-6 rounded-xl border border-gray-200">
+                  <h3 class="text-xl font-bold mb-4">خدمات الإعلام والنشر</h3>
+                  <div class="space-y-3">
+                    <a href="http://localhost:8088" target="_blank" class="block p-3 bg-base-200 rounded-lg hover:bg-gray-200"><strong>AzuraCast:</strong> إدارة البث الإذاعي</a>
+                    <a href="http://localhost:2368/ghost" target="_blank" class="block p-3 bg-base-200 rounded-lg hover:bg-gray-200"><strong>Ghost:</strong> إدارة النشر والمدونة</a>
+                    <a href="http://localhost:8092" target="_blank" class="block p-3 bg-base-200 rounded-lg hover:bg-gray-200"><strong>Mixpost:</strong> جدولة وسائل التواصل الاجتماعي</a>
+                    <a href="http://localhost:8090" target="_blank" class="block p-3 bg-base-200 rounded-lg hover:bg-gray-200"><strong>Label Studio:</strong> تصنيف بيانات التدريب</a>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      }
+      @case ('users') {
+        <app-user-management (navigate)="$event"></app-user-management>
+      }
+      @case ('tools') {
+        <app-tool-management></app-tool-management>
+      }
+      @case ('content') {
+        <app-content-management></app-content-management>
+      }
+      @case ('layout') {
+        <app-dashboard-customization></app-dashboard-customization>
+      }
+      @case ('haqiqa') {
+        <app-haqiqa-management></app-haqiqa-management>
+      }
+      @case ('ai-ops') {
+        <app-ai-management></app-ai-management>
+      }
+      @case ('email') {
+        <app-email-management></app-email-management>
+      }
+      @case ('logs') {
+        <app-audit-log></app-audit-log>
+      }
+      @case ('security') {
+        <app-security-management></app-security-management>
+      }
+    }
+  </div>
+</div>

@@ -1,0 +1,55 @@
+<div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center animate-fade-in" (click)="onClose()">
+  <div class="bg-base-100 rounded-2xl shadow-xl w-full max-w-2xl p-8 m-4 flex flex-col gap-6" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="flex items-start justify-between">
+      <div class="flex items-center gap-4">
+        <div class="w-16 h-16 flex items-center justify-center rounded-lg flex-shrink-0" [ngClass]="tool().iconColor.replace('text-', 'bg-').replace('-500', '-100').replace('-600', '-100')">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-9 h-9" [ngClass]="tool().iconColor">
+            <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="tool().iconSvg" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900">{{ tool().name }}</h2>
+          <p class="text-sm text-gray-500 font-mono">{{ tool().englishName }}</p>
+        </div>
+      </div>
+       <button (click)="onClose()" class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+       </button>
+    </div>
+
+    <!-- Details -->
+    <div>
+        <div class="p-4 bg-base-200/50 rounded-lg">
+            <p class="font-semibold">الفئة: <span class="font-normal">{{ tool().category }}</span></p>
+            <p class="font-semibold mt-2">الوصف:</p>
+            <p class="text-gray-700">{{ tool().description }}</p>
+        </div>
+    </div>
+    
+     <!-- Usage Example -->
+    <div class="prose prose-sm max-w-none p-4 border rounded-lg">
+        <h4 class="font-bold">مثال على حالة الاستخدام:</h4>
+        <p>
+            للبحث عن حسابات مرتبطة بالبريد الإلكتروني <code class="font-mono text-xs">journalist@example.com</code>, يمكنك استخدام هذه الأداة لتحليل البصمة الرقمية عبر منصات متعددة وتحديد الحسابات المرتبطة بهذا البريد.
+        </p>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="flex justify-end gap-4">
+       <button 
+          (click)="onClose()" 
+          class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-base-200 rounded-lg hover:bg-base-300">
+          إغلاق
+       </button>
+       <button 
+          (click)="onRunTool()"
+          class="px-5 py-2.5 text-sm font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark disabled:bg-gray-400 disabled:cursor-not-allowed shadow hover:shadow-md flex items-center"
+          [disabled]="!tool().isActive">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 me-2"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" /></svg>
+          تشغيل الأداة
+       </button>
+    </div>
+
+  </div>
+</div>

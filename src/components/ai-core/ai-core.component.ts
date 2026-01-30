@@ -1,0 +1,240 @@
+
+import { Component, ChangeDetectionStrategy, signal, inject, computed, effect, ViewChild, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ImageAnalysisComponent } from '../image-analysis/image-analysis.component';
+import { GeminiService } from '../../services/gemini.service';
+import { SettingsService } from '../../services/settings.service';
+import { UserService } from '../../services/user.service';
+import { Content, GenerateContentResponse, Tool as GeminiTool, Type } from '@google/genai';
+import { ToolStateService } from '../../services/tool-state.service';
+import { ToolService } from '../../services/tool.service';
+import { LoggerService } from '../../services/logger.service';
+
+interface Message {
+  id: number;
+  text: string;
+  from: 'user' | 'ai' | 'system';
+  timestamp: Date;
+  toolUsed?: string;
+  isError?: boolean;
+}
+
+interface ChatSession {
+  id: string;
+  title: string;
+  date: Date;
+}
+
+@Component({
+  selector: 'app-ai-core',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ImageAnalysisComponent],
+  templateUrl: './ai-core.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class AiCoreComponent {
+  private geminiService = inject(GeminiService);
+  private settingsService = inject(SettingsService);
+  private userService = inject(UserService);
+  private toolStateService = inject(ToolStateService);
+  private toolService = inject(ToolService);
+  private logger = inject(LoggerService);
+  
+  @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+
+  user = this.userService.currentUser;
+  currentAiProvider = this.settingsService.aiProvider;
+
+  // UI State
+  isSidebarOpen = signal(true);
+  messages = signal<Message[]>([]);
+  currentInput = signal('');
+  isGenerating = signal(false);
+  
+  // Chat History
+  chatHistory = signal<ChatSession[]>([
+    { id: '1', title: 'تحليل بيانات الميناء', date: new Date() },
+    { id: '2', title: 'ملخص تقرير الأمم المتحدة', date: new Date(Date.now() - 86400000) },
+    { id: '3', title: 'البحث عن حسابات تويتر', date: new Date(Date.now() - 172800000) },
+  ]);
+
+  // Available Models
+  availableModels = [
+    { id: 'gemini-pro', name: 'YemenJPT-Cloud (Pro 1.5)', icon: '✨', provider: 'google' },
+    { id: 'gemini-flash', name: 'YemenJPT-Cloud (Flash)', icon: '⚡', provider: 'google' },
+    { id: 'local-falcon', name: 'Local Falcon-3 (Offline)', icon: '🔒', provider: 'local' }
+  ];
+  selectedModel = signal(this.availableModels[0]);
+
+  // --- Tool Definitions (Model Context Protocol - Client Side) ---
+  private getAllToolsForAI = computed(() => {
+    const user = this.user();
+    if (!user) return [];
+    return this.toolService.tools().filter(tool => {
+        if (!tool.isActive || tool.id === 'ai-assistant') return false;
+        if (user.role === 'super-admin') return true;
+        return tool.allowedRoles.includes(user.role);
+    });
+  });
+
+  // Dynamically generate the Tool Schema for Gemini based on user permissions
+  geminiTools = computed((): GeminiTool[] | undefined => {
+    const allowedTools = this.getAllToolsForAI();
+    // Only enable tools if using Google provider (Local LLM tool use is experimental)
+    if (!allowedTools.length || this.currentAiProvider() === 'local') return undefined;
+
+    return [{
+        functionDeclarations: [
+            {
+                name: 'run_tool',
+                description: 'Open or execute a specialized tool on the YemenJPT platform. Use this when the user asks to perform a specific task like searching, archiving, or checking facts.',
+                parameters: {
+                    type: Type.OBJECT,
+                    properties: {
+                        toolId: {
+                            type: Type.STRING,
+                            description: 'The unique ID of the tool to run.',
+                            enum: allowedTools.map(t => t.id)
+                        }
+                    },
+                    required: ['toolId'],
+                },
+            },
+        ],
+    }];
+  });
+
+  constructor() {
+    this.startNewChat();
+    // Auto-scroll effect
+    effect(() => {
+      this.messages();
+      setTimeout(() => this.scrollToBottom(), 100);
+    });
+  }
+
+  toggleSidebar() {
+    this.isSidebarOpen.update(v => !v);
+  }
+
+  startNewChat() {
+    this.messages.set([
+      { 
+        id: Date.now(), 
+        text: `مرحباً ${this.user()?.name || 'يا صديقي'} 👋\nأنا مساعدك الذكي في منصة بيت الصحافة. يمكنني مساعدتك في البحث، التحليل، أو استخدام أدوات المنصة نيابة عنك.`, 
+        from: 'ai', 
+        timestamp: new Date() 
+      }
+    ]);
+  }
+
+  selectModel(model: any) {
+    this.selectedModel.set(model);
+    this.settingsService.aiProvider.set(model.provider as 'google' | 'local');
+  }
+
+  async sendMessage() {
+    if (!this.currentInput().trim() || this.isGenerating()) return;
+
+    const userText = this.currentInput();
+    this.currentInput.set(''); // Clear input
+    
+    // 1. Add User Message
+    this.addMessage(userText, 'user');
+    this.isGenerating.set(true);
+
+    try {
+      const history: Content[] = this.messages()
+        .filter(m => m.from !== 'system' && !m.isError) // Clean context
+        .map(msg => ({
+          role: msg.from === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.text }]
+        }));
+
+      // 2. Call Gemini
+      const response = await this.geminiService.getChatResponse(
+        history, 
+        userText, 
+        this.geminiTools()
+      );
+
+      // 3. Handle Tool Calls (MCP)
+      const functionCallParts = response.candidates?.[0]?.content?.parts?.filter(p => !!p.functionCall);
+      
+      if (functionCallParts && functionCallParts.length > 0) {
+        for (const part of functionCallParts) {
+          const call = part.functionCall;
+          if (call && call.name === 'run_tool') {
+            const { toolId } = call.args as any;
+            this.handleToolExecution(toolId);
+          }
+        }
+      }
+
+      // 4. Handle Text Response
+      const responseText = response.text;
+      if (responseText) {
+        this.addMessage(responseText, 'ai');
+      } else if (!functionCallParts?.length) {
+         this.addMessage('عذراً، لم أتمكن من معالجة الطلب. يرجى المحاولة مرة أخرى.', 'ai', true);
+      }
+
+    } catch (error) {
+      console.error(error);
+      this.addMessage('حدث خطأ في الاتصال بالشبكة العصبية.', 'ai', true);
+    } finally {
+      this.isGenerating.set(false);
+    }
+  }
+
+  private handleToolExecution(toolId: string) {
+    const tool = this.toolService.tools().find(t => t.id === toolId);
+    if (tool) {
+      // System feedback
+      this.messages.update(msgs => [...msgs, {
+        id: Date.now(),
+        text: `جارٍ تشغيل أداة: ${tool.name}...`,
+        from: 'system',
+        toolUsed: tool.name,
+        timestamp: new Date()
+      }]);
+      
+      // Execute
+      setTimeout(() => {
+        this.toolStateService.runTool(toolId);
+      }, 800); // Slight delay for UX
+      
+      // Audit Log
+      this.logger.logEvent(
+        'AI Agent Action',
+        `AI activated tool: ${tool.name}`,
+        this.user()?.name,
+        false
+      );
+    }
+  }
+
+  private addMessage(text: string, from: 'user' | 'ai' | 'system', isError = false) {
+    this.messages.update(msgs => [...msgs, {
+      id: Date.now(),
+      text,
+      from,
+      timestamp: new Date(),
+      isError
+    }]);
+  }
+
+  handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendMessage();
+    }
+  }
+
+  scrollToBottom() {
+    if(this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollTop = this.scrollContainer.nativeElement.scrollHeight;
+    }
+  }
+}

@@ -1,0 +1,112 @@
+<div class="space-y-6">
+  <div class="border-b border-gray-200">
+    <nav class="-mb-px flex space-i-6" aria-label="Tabs">
+      <button (click)="setTab('about')" [class]="activeTab() === 'about' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm">محتوى "من نحن"</button>
+      <button (click)="setTab('team')" [class]="activeTab() === 'team' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm">الفريق</button>
+      <button (click)="setTab('projects')" [class]="activeTab() === 'projects' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm">المشاريع</button>
+      <button (click)="setTab('news')" [class]="activeTab() === 'news' ? 'border-ph-blue text-ph-blue' : 'border-transparent text-gray-500 hover:text-gray-700'" class="whitespace-nowrap py-3 px-2 border-b-2 font-medium text-sm">الأخبار والتقارير</button>
+    </nav>
+  </div>
+
+  <div class="pt-4">
+    @switch (activeTab()) {
+      @case ('about') {
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium">مقدمة</label>
+            <textarea [(ngModel)]="editableAbout().introduction" rows="4" class="w-full p-2 border rounded-md bg-gray-50"></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div><label class="block text-sm font-medium">رؤيتنا</label><input type="text" [(ngModel)]="editableAbout().vision" class="w-full p-2 border rounded-md bg-gray-50"></div>
+            <div><label class="block text-sm font-medium">رسالتنا</label><input type="text" [(ngModel)]="editableAbout().mission" class="w-full p-2 border rounded-md bg-gray-50"></div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium">الأهداف (افصل بين كل هدف بسطر جديد)</label>
+            <textarea [(ngModel)]="editableAbout().objectives" [value]="editableAbout().objectives.join('\n')" (input)="editableAbout().objectives = $any($event.target).value.split('\n')" rows="6" class="w-full p-2 border rounded-md bg-gray-50"></textarea>
+          </div>
+          <button (click)="saveAbout()" class="px-4 py-2 text-white bg-ph-blue rounded-lg">حفظ التغييرات</button>
+        </div>
+      }
+      @case ('team') {
+        <div class="space-y-8">
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="text-lg font-semibold">فريق بيت الصحافة</h3>
+              <button (click)="addTeamMember()" class="text-sm text-ph-blue font-semibold">+ إضافة عضو</button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              @for(member of editableTeam(); track member.id){
+                <div class="p-2 border rounded-lg bg-base-100 relative">
+                   <button (click)="removeTeamMember(member.id)" class="absolute top-1 end-1 text-red-500 p-0.5 rounded-full hover:bg-red-100">&times;</button>
+                   <input type="text" [(ngModel)]="member.name" placeholder="الاسم" class="w-full border-b mb-1">
+                   <input type="text" [(ngModel)]="member.title" placeholder="المنصب" class="w-full border-b text-xs mb-1">
+                   <input type="text" [(ngModel)]="member.imageUrl" placeholder="رابط الصورة" class="w-full border-b text-xs">
+                </div>
+              }
+            </div>
+          </div>
+           <div>
+            <div class="flex justify-between items-center mb-2">
+              <h3 class="text-lg font-semibold">الهيئة الاستشارية</h3>
+              <button (click)="addAdvisor()" class="text-sm text-ph-blue font-semibold">+ إضافة عضو</button>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+               @for(member of editableAdvisors(); track member.id){
+                <div class="p-2 border rounded-lg bg-base-100 relative">
+                   <button (click)="removeAdvisor(member.id)" class="absolute top-1 end-1 text-red-500 p-0.5 rounded-full hover:bg-red-100">&times;</button>
+                   <input type="text" [(ngModel)]="member.name" placeholder="الاسم" class="w-full border-b mb-1">
+                   <input type="text" [(ngModel)]="member.imageUrl" placeholder="رابط الصورة" class="w-full border-b text-xs">
+                </div>
+              }
+            </div>
+          </div>
+          <button (click)="saveTeam()" class="px-4 py-2 text-white bg-ph-blue rounded-lg">حفظ التغييرات</button>
+        </div>
+      }
+      @case ('projects') {
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-lg font-semibold">إدارة المشاريع</h3>
+            <button (click)="addProject()" class="text-sm text-ph-blue font-semibold">+ إضافة مشروع</button>
+          </div>
+          <div class="space-y-3">
+             @for(project of editableProjects(); track project.id){
+              <div class="p-3 border rounded-lg bg-base-100 relative">
+                <button (click)="removeProject(project.id)" class="absolute top-2 end-2 text-red-500 p-0.5 rounded-full hover:bg-red-100">&times;</button>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <input type="text" [(ngModel)]="project.title" placeholder="عنوان المشروع" class="md:col-span-3 border-b mb-1 font-semibold">
+                  <textarea [(ngModel)]="project.description" placeholder="وصف المشروع" rows="2" class="md:col-span-3 border-b text-sm mb-1"></textarea>
+                  <input type="text" [(ngModel)]="project.imageUrl" placeholder="رابط الصورة" class="md:col-span-3 border-b text-xs">
+                </div>
+              </div>
+            }
+          </div>
+          <button (click)="saveProjects()" class="mt-4 px-4 py-2 text-white bg-ph-blue rounded-lg">حفظ التغييرات</button>
+        </div>
+      }
+      @case ('news') {
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-lg font-semibold">إدارة الأخبار والتقارير</h3>
+            <button (click)="addNews()" class="text-sm text-ph-blue font-semibold">+ إضافة خبر</button>
+          </div>
+          <div class="space-y-3">
+             @for(article of editableNews(); track article.id){
+              <div class="p-3 border rounded-lg bg-base-100 relative">
+                <button (click)="removeNews(article.id)" class="absolute top-2 end-2 text-red-500 p-0.5 rounded-full hover:bg-red-100">&times;</button>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
+                  <input type="text" [(ngModel)]="article.title" placeholder="العنوان" class="md:col-span-4 border-b mb-1 font-semibold">
+                  <input type="text" [(ngModel)]="article.category" placeholder="الفئة" class="border-b text-sm">
+                  <input type="date" [ngModel]="article.date" (ngModelChange)="article.date = $event" class="md:col-span-3 border-b text-sm">
+                  <textarea [(ngModel)]="article.summary" placeholder="ملخص الخبر" rows="2" class="md:col-span-4 border-b text-sm mb-1"></textarea>
+                  <input type="text" [(ngModel)]="article.imageUrl" placeholder="رابط الصورة" class="md:col-span-4 border-b text-xs">
+                </div>
+              </div>
+            }
+          </div>
+          <button (click)="saveNews()" class="mt-4 px-4 py-2 text-white bg-ph-blue rounded-lg">حفظ التغييرات</button>
+        </div>
+      }
+    }
+  </div>
+</div>

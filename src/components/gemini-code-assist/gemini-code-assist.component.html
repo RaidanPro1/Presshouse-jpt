@@ -1,0 +1,75 @@
+<div class="space-y-8 max-w-6xl mx-auto animate-fade-in">
+  <div class="text-center">
+    <h1 class="text-2xl font-bold text-gray-900 flex items-center justify-center">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 me-3 text-purple-500">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25" />
+      </svg>
+      مساعد الكود Gemini
+    </h1>
+    <p class="text-gray-500 mt-2">
+      مساعد ذكي للمطورين. يساعد في كتابة الأكواد، تصحيح الأخطاء، وإنشاء سكربتات التشغيل الآلي للمنصة.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Input Panel -->
+    <div class="bg-base-200/50 p-6 rounded-xl shadow-inner space-y-4">
+      <div>
+        <label for="language" class="block mb-2 text-sm font-medium">1. اختر اللغة</label>
+        <select id="language" [(ngModel)]="language" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 font-mono">
+          @for(lang of languages; track lang) { <option [value]="lang">{{lang}}</option> }
+        </select>
+      </div>
+      <div>
+        <label for="prompt" class="block mb-2 text-sm font-medium">2. صف ما تريد إنجازه</label>
+        <textarea 
+          id="prompt" 
+          [(ngModel)]="prompt"
+          rows="8" 
+          class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-ph-blue focus:border-ph-blue" 
+          placeholder="مثال: اكتب سكربت بايثون لتحليل ملف CSV واستخراج الأعمدة التي تحتوي على بريد إلكتروني..."></textarea>
+      </div>
+       <button (click)="generateCode()" [disabled]="isLoading() || !prompt()" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-purple-700 disabled:bg-gray-400 flex items-center justify-center">
+          @if(isLoading()) {
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <span>جارِ الإنشاء...</span>
+          } @else {
+            <span>إنشاء الكود</span>
+          }
+        </button>
+    </div>
+
+    <!-- Output Panel -->
+    <div class="bg-gray-800 p-4 rounded-xl shadow-inner flex flex-col h-[500px]">
+       <div class="flex-shrink-0 flex justify-between items-center pb-2 border-b border-gray-600">
+         <span class="text-sm font-semibold text-gray-300">النتيجة</span>
+         @if (result()) {
+          <button (click)="copyCode()" class="px-3 py-1 text-xs rounded-md flex items-center transition-colors" [ngClass]="copySuccess() ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-200 hover:bg-gray-500'">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 me-2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a2.25 2.25 0 0 1-2.25 2.25h-1.5a2.25 2.25 0 0 1-2.25-2.25v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+            </svg>
+            {{ copySuccess() ? 'تم النسخ' : 'نسخ' }}
+          </button>
+         }
+       </div>
+       <div class="flex-grow overflow-auto mt-2">
+         @if (isLoading()) {
+            <div class="flex items-center justify-center h-full text-gray-400">
+                <p>يتم إنشاء الكود...</p>
+            </div>
+         } @else if(error()) {
+            <div class="flex items-center justify-center h-full text-red-400">
+                <p>{{ error() }}</p>
+            </div>
+         } @else if(result()) {
+            <pre><code class="text-sm text-white hljs font-mono {{ language().toLowerCase() }}">{{ result() }}</code></pre>
+         } @else {
+            <div class="flex items-center justify-center h-full text-gray-500">
+                <p>ستظهر نتيجة الكود هنا.</p>
+            </div>
+         }
+       </div>
+    </div>
+
+  </div>
+</div>

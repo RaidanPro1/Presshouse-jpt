@@ -1,0 +1,32 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">الأرشفة والتوثيق الرقمي</h1>
+    <p class="text-gray-500 mt-1">
+      أدوات لحفظ وأرشفة المحتوى الرقمي بشكل آمن ودائم، وضمان بقاء الأدلة والمعلومات.
+    </p>
+  </div>
+
+  <!-- Archive Input Section -->
+  <section class="bg-base-100 p-6 rounded-xl shadow">
+    <h2 class="text-xl font-bold mb-4">أرشفة رابط جديد</h2>
+    <div class="flex items-center gap-2">
+        <input type="url" class="flex-grow p-2.5 rounded-lg border border-gray-300 bg-gray-50" placeholder="https://example.com/article-to-archive">
+        <button class="px-6 py-2.5 font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark shadow hover:shadow-md transform hover:-translate-y-px transition-all">
+            أرشفة الآن
+        </button>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-xl font-bold mb-4">أدوات الأرشفة المتاحة</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (tool of archivingTools(); track tool.id) {
+        <app-tool-card 
+          [tool]="tool" 
+          [userRole]="user()?.role ?? 'guest'"
+          (toggleStatus)="handleToolToggle($event)"
+          (toggleFavorite)="handleToggleFavorite($event)"></app-tool-card>
+      }
+    </div>
+  </section>
+</div>

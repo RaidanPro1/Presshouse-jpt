@@ -1,0 +1,133 @@
+
+<div class="space-y-8 animate-fade-in">
+  <!-- Header -->
+  <header>
+    <h1 class="text-3xl font-bold text-gray-900">مساحة عمل الصحفي</h1>
+    <p class="text-gray-500 mt-1">لوحة التحكم المركزية لمتابعة تحقيقاتك، الوصول لأدواتك، والبقاء على اطلاع بآخر المستجدات.</p>
+  </header>
+  
+  <!-- Main Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    @for(widgetKey of visibleWidgets(); track widgetKey) {
+      <div class="col-span-12" [ngClass]="getWidgetSpan(widgetKey)">
+        @switch (widgetKey) {
+          @case ('quick-access') {
+            <section class="bg-base-100 p-6 rounded-xl shadow-lg h-full">
+              <h2 class="text-xl font-bold text-gray-800 mb-4">أدوات الوصول السريع</h2>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                @for(tool of quickAccessTools(); track tool.id) {
+                  <a [href]="tool.url" target="_blank" class="block bg-base-200 p-4 rounded-xl hover:shadow-md hover:-translate-y-1 transition-all text-center">
+                    <div class="w-12 h-12 mx-auto bg-ph-blue/10 rounded-full flex items-center justify-center mb-2">
+                       <svg class="w-6 h-6 text-ph-blue" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        @switch (tool.icon) {
+                          @case ('robot') { <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 21v-1.5M15.75 3v1.5m0 15v-1.5M12 4.5v-1.5m0 18v-1.5" /> <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 18.75h3M10.5 5.25h3M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18Z" /> }
+                          @case ('search') { <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /> }
+                          @case ('window-maximize') { <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M9 9.563C9 9.252 9.252 9 9.563 9h4.874c.311 0 .563.252.563.563v4.874c0 .311-.252.563-.563.563H9.563A.562.562 0 0 1 9 14.437V9.564Z" /> }
+                          @case ('comments') { <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.76 9.76 0 0 1-2.53-.423l-4.28 1.07a.375.375 0 0 1-.427-.427l1.07-4.28A9.756 9.756 0 0 1 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" /> }
+                          @case ('cloud') { <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15a4.5 4.5 0 0 0 4.5 4.5H18a3.75 3.75 0 0 0 1.332-7.257 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.343A4.5 4.5 0 0 0 2.25 15Z" /> }
+                          @case ('language') { <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 0 1 6-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C13.18 7.061 14.287 7.5 15.5 7.5c1.213 0 2.32-.439 3.166-1.136m0 0L15.5 12l-2.334-2.364m3.675 3.675a3.032 3.032 0 0 1-4.286 0m4.286 0a3.032 3.032 0 0 0 0-4.286m-4.286 4.286L12 15.5m2.334-2.364-3.675 3.675" /> }
+                        }
+                      </svg>
+                    </div>
+                    <h3 class="font-bold text-gray-800 text-sm mt-2">{{ tool.name }}</h3>
+                  </a>
+                }
+              </div>
+            </section>
+          }
+          @case ('investigations') {
+            <section class="bg-base-100 p-6 rounded-xl shadow-lg h-full">
+              <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">تحقيقاتي</h2>
+                <div class="relative w-full max-w-sm">
+                  <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/></svg>
+                  </div>
+                  <input type="text" [(ngModel)]="investigationSearchTerm" class="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-ph-blue focus:border-ph-blue" placeholder="بحث في التحقيقات...">
+                </div>
+              </div>
+              <div class="space-y-3">
+                @for (inv of filteredInvestigations(); track inv.id) {
+                  <div class="bg-base-200 hover:bg-gray-200 p-4 rounded-lg flex justify-between items-center transition-colors cursor-pointer">
+                    <div>
+                      <p class="font-semibold text-gray-900">{{ inv.title }}</p>
+                      <p class="text-xs text-gray-500">المسؤول: <span class="font-medium">{{ inv.lead }}</span> • آخر تحديث: {{ inv.lastUpdated }}</p>
+                    </div>
+                    <span class="text-xs font-bold px-3 py-1 rounded-full" [ngClass]="{ 'bg-yellow-100 text-yellow-800': inv.status === 'قيد المراجعة', 'bg-blue-100 text-blue-800': inv.status === 'مسودة', 'bg-green-100 text-green-800': inv.status === 'نُشر' }">
+                      {{ inv.status }}
+                    </span>
+                  </div>
+                } @empty {
+                  <div class="text-center py-8 text-gray-500">
+                      <p>لا توجد تحقيقات تطابق بحثك.</p>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+          @case ('services') {
+            <section class="bg-base-100 p-6 rounded-xl shadow-lg h-full">
+              <h2 class="text-xl font-bold text-gray-800 mb-4">حالة خدمات غرفة الأخبار</h2>
+              <ul class="space-y-3">
+                @for(service of newsroomServices(); track service.name) {
+                  <li class="flex items-center justify-between">
+                    <span class="text-sm font-semibold text-gray-700">{{ service.name }}</span>
+                    <div class="flex items-center">
+                      <span class="w-2.5 h-2.5 me-2 rounded-full" [ngClass]="{'bg-green-500': service.status === 'Online', 'bg-yellow-500': service.status === 'Degraded', 'bg-red-500': service.status === 'Offline'}"></span>
+                      <span class="text-sm font-bold" [ngClass]="{'text-green-600': service.status === 'Online', 'text-yellow-600': service.status === 'Degraded', 'text-red-600': service.status === 'Offline'}">{{ service.status }}</span>
+                    </div>
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+          @case ('knowledge') {
+            <section class="bg-ph-blue text-white p-6 rounded-xl shadow-lg h-full">
+              <h2 class="text-xl font-bold mb-3 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" /></svg>
+                  من قاعدة المعرفة
+              </h2>
+              <h3 class="font-bold">{{ knowledgeBaseSpotlight().title }}</h3>
+              <p class="text-sm text-gray-200 mt-2">{{ knowledgeBaseSpotlight().summary }}</p>
+              <button (click)="onNavigate(knowledgeBaseSpotlight().urlKey)" class="mt-4 text-sm font-bold text-ph-yellow hover:underline">اقرأ الدليل الكامل ←</button>
+            </section>
+          }
+          @case ('alerts') {
+            <section class="bg-base-100 rounded-xl shadow-lg h-full">
+              <h2 class="text-xl font-bold text-ph-yellow p-4 border-b border-gray-200 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.007H12v-.007Z" /></svg>
+                  <span>الإنذار المبكر (IndiLab)</span>
+              </h2>
+              <div class="p-4 space-y-3">
+                  @for (alert of alerts(); track alert.id) {
+                  <div class="bg-base-200 p-3 rounded-lg border-s-4 border-ph-yellow/50">
+                      <p class="text-sm text-gray-700">{{ alert.text }}</p>
+                      <p class="text-xs text-gray-500 text-left mt-1">{{ alert.timestamp }}</p>
+                  </div>
+                  }
+              </div>
+            </section>
+          }
+          @case ('activity') {
+            <section class="bg-base-100 p-6 rounded-xl shadow-lg h-full">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">آخر النشاطات</h2>
+                <ul class="space-y-4">
+                    @for(item of activityFeed(); track item.time) {
+                        <li class="flex items-center gap-3">
+                            <img [src]="item.avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+                            <p class="text-sm text-gray-600">
+                                <span class="font-semibold text-gray-800">{{ item.user }}</span>
+                                {{ item.action }}
+                                <span class="font-semibold text-ph-blue">"{{ item.target }}"</span>
+                            </p>
+                            <span class="ms-auto text-xs text-gray-400 flex-shrink-0">{{ item.time }}</span>
+                        </li>
+                    }
+                </ul>
+            </section>
+          }
+        }
+      </div>
+    }
+  </div>
+</div>

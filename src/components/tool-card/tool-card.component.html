@@ -1,0 +1,64 @@
+
+@if (tool()) {
+  <div 
+    (click)="onViewDetails()"
+    class="relative bg-white p-6 rounded-2xl border border-gray-200 hover:border-ph-blue/50 transition-all duration-300 flex flex-col h-full cursor-pointer group"
+    [class.run-tool-animation]="isRunning()"
+    [title]="tool().description">
+
+    <button (click)="onToggleFavorite($event)" class="absolute top-3 end-3 text-gray-400 hover:text-ph-yellow transition-colors z-10" [class.disabled:opacity-50]="mode() === 'guest'" [disabled]="mode() === 'guest'" [attr.aria-pressed]="tool().isFavorite">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-6 h-6" [class]="tool().isFavorite ? 'fill-ph-yellow text-ph-yellow' : 'fill-current'">
+          <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.312l-4.12 3.535 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.12-3.535c-.887-.767-.415-2.219.749-2.312l5.404-.434 2.082-5.006Z" clip-rule="evenodd" />
+      </svg>
+    </button>
+    
+    <!-- Header -->
+    <div class="flex items-start gap-4 mb-4">
+      <div class="w-12 h-12 flex items-center justify-center rounded-lg bg-gray-100 flex-shrink-0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-7 h-7" [ngClass]="tool().iconColor">
+          <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="tool().iconSvg" />
+        </svg>
+      </div>
+      <div class="flex-grow text-right">
+        <h3 class="font-bold text-base text-gray-800 group-hover:text-black">{{ tool().name }}</h3>
+        <p class="text-xs text-gray-500 font-sans">{{ tool().englishName }}</p>
+      </div>
+    </div>
+    
+    <!-- Description -->
+    <p class="text-sm text-gray-600 flex-grow mb-4 line-clamp-3">
+      {{ tool().description }}
+    </p>
+
+    <!-- Footer -->
+    <div class="mt-auto flex items-center justify-between">
+      <div class="flex items-center">
+        @if (mode() === 'user' && (userRole() === 'super-admin' || userRole() === 'editor-in-chief')) {
+          <!-- Toggle Switch for Admins -->
+          <label (click)="$event.stopPropagation()" class="relative inline-flex items-center cursor-pointer me-4">
+            <input type="checkbox" [checked]="tool().isActive" (change)="onToggle($event)" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ph-blue"></div>
+          </label>
+        }
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full" [class]="tool().isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+          {{ tool().isActive ? 'نشط' : 'متوقف' }}
+        </span>
+      </div>
+      
+      @if (mode() === 'user') {
+        <button 
+          (click)="onRunTool($event)"
+          class="px-4 py-2 text-sm font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark disabled:bg-gray-500 disabled:cursor-not-allowed shadow hover:shadow-md transform hover:-translate-y-px transition-all"
+          [disabled]="!tool().isActive">
+          تشغيل
+        </button>
+      } @else {
+        <button 
+          (click)="onTrialClick($event)"
+          class="px-4 py-2 text-sm font-bold text-ph-blue-dark rounded-lg bg-ph-yellow hover:bg-ph-yellow-dark shadow hover:shadow-md transform hover:-translate-y-px transition-all">
+          تجربة محدودة
+        </button>
+      }
+    </div>
+  </div>
+}

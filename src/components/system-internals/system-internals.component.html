@@ -1,0 +1,74 @@
+<div class="space-y-8 animate-fade-in">
+  <div class="flex items-center justify-between">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-900">بنية النظام الداخلية</h1>
+        <p class="text-gray-500 mt-1">
+            مخطط يوضح البنية التحتية للمنصة وكيفية تفاعل الخدمات الرئيسية. (خاص بمستخدمي Root)
+        </p>
+    </div>
+     @if(isRoot()){
+      <div>
+        @if (isEditMode()) {
+          <div class="flex gap-2">
+              <button (click)="saveChanges()" class="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">حفظ</button>
+              <button (click)="cancelEdit()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">إلغاء</button>
+          </div>
+        } @else {
+          <button (click)="toggleEditMode()" class="px-4 py-2 text-sm font-medium text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark">تعديل</button>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="bg-base-100 p-6 rounded-xl shadow space-y-6">
+      <!-- Entrypoint -->
+      <div class="text-center p-4 bg-gray-100 rounded-lg">
+          <p class="font-bold text-lg">🌐 المستخدم / الإنترنت → ☁️ Cloudflare (DNS & Security)</p>
+      </div>
+
+      <!-- Arrow -->
+      <div class="flex justify-center"><div class="h-8 w-px bg-gray-300"></div></div>
+
+      <!-- Gateway -->
+      <div class="p-4 bg-green-100 rounded-xl border-2 border-dashed border-green-400">
+        <h2 class="font-bold text-xl text-center text-green-800">🛡️ البوابة الرئيسية: Traefik (Gateway)</h2>
+        <p class="text-sm text-center text-green-700">يدير جميع الطلبات، يوفر شهادات SSL، ويوجه الحركة للخدمة الصحيحة.</p>
+      </div>
+      
+      <!-- Arrow -->
+      <div class="flex justify-center"><div class="h-8 w-px bg-gray-300"></div></div>
+
+      <!-- Docker Host -->
+      <div class="p-4 bg-base-200 rounded-xl border border-gray-300">
+        <h2 class="font-bold text-xl text-center text-gray-800 mb-4">🐳 بيئة Docker</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          @for(category of (isEditMode() ? editedArchitecture() : architecture()); track category.name; let catIndex = $index) {
+            <div class="p-4 rounded-lg" [ngClass]="'bg-' + category.color + '-100'">
+              <h3 class="font-semibold text-center mb-3" [ngClass]="'text-' + category.color + '-800'">{{ category.name }}</h3>
+              <div class="space-y-3">
+                @for(service of category.services; track service.name; let serviceIndex = $index) {
+                  <div class="p-3 bg-base-100 rounded-md">
+                    @if (isEditMode()) {
+                        <input type="text" [(ngModel)]="editedArchitecture()[catIndex].services[serviceIndex].name" class="font-bold w-full bg-transparent border-b"/>
+                        <textarea [(ngModel)]="editedArchitecture()[catIndex].services[serviceIndex].description" class="text-xs w-full bg-transparent border-b h-10 resize-none"></textarea>
+                        <input type="text" [(ngModel)]="editedArchitecture()[catIndex].services[serviceIndex].url" class="text-xs w-full bg-transparent border-b font-mono"/>
+                    } @else {
+                      <p class="font-bold text-sm">
+                        {{ service.icon }} 
+                        @if (isRoot() && service.url) {
+                           <a [href]="service.url" target="_blank" class="hover:underline">{{ service.name }}</a>
+                        } @else {
+                           {{ service.name }}
+                        }
+                      </p>
+                      <p class="text-xs text-gray-500">{{ service.description }}</p>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+  </div>
+</div>

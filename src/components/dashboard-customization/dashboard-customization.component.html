@@ -1,0 +1,60 @@
+
+<div class="space-y-6 animate-fade-in">
+  <h2 class="text-2xl font-bold text-gray-800">تخصيص لوحة التحكم</h2>
+  <div class="flex items-center gap-4 bg-base-200/50 p-4 rounded-xl">
+    <label for="role-selector" class="font-semibold text-gray-800 flex-shrink-0">تخصيص لوحة التحكم لدور:</label>
+    <select id="role-selector" (change)="selectRole($event)" class="p-2 border border-gray-300 rounded-md bg-white">
+      @for(role of customizableRoles; track role) {
+        <option [value]="role" [selected]="role === selectedRole()">{{ getRoleDisplayName(role) }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <!-- Visible Widgets (Sortable) -->
+    <div class="bg-base-100 p-4 rounded-xl shadow-md border">
+      <h3 class="font-bold mb-4 text-gray-900">الوحدات الظاهرة (اسحب للترتيب)</h3>
+      <div class="space-y-3 min-h-[200px] p-2 bg-base-200/50 rounded-lg">
+        @for (widget of visibleWidgets(); track widget.key) {
+          <div 
+            class="p-4 bg-white rounded-lg shadow-sm flex items-center justify-between cursor-grab active:cursor-grabbing border-l-4 border-ph-blue"
+            draggable="true"
+            (dragstart)="onDragStart(widget.key)"
+            (dragover)="onDragOver($event)"
+            (drop)="onDrop($event, widget.key)"
+            (dragend)="onDragEnd()">
+            <span class="font-semibold text-gray-800">{{ widget.name }}</span>
+            <button (click)="toggleWidgetVisibility(widget.key, false)" class="text-xs font-semibold text-red-500 hover:text-red-700 hover:bg-red-100 p-1 rounded-md">إخفاء</button>
+          </div>
+        } @empty {
+          <div class="text-center text-gray-500 p-8 border-2 border-dashed rounded-lg">
+            <p>لا توجد وحدات ظاهرة.</p>
+            <p class="text-sm">اسحب وحدة من القائمة اليسرى إلى هنا لإظهارها.</p>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Hidden Widgets -->
+    <div class="bg-base-100 p-4 rounded-xl shadow-md border">
+      <h3 class="font-bold mb-4 text-gray-900">الوحدات المخفية</h3>
+      <div class="space-y-3 min-h-[200px] p-2 bg-base-200/50 rounded-lg">
+        @for (widget of hiddenWidgets(); track widget.key) {
+          <div class="p-4 bg-white rounded-lg shadow-sm flex items-center justify-between opacity-60">
+            <span class="font-semibold text-gray-600">{{ widget.name }}</span>
+            <button (click)="toggleWidgetVisibility(widget.key, true)" class="text-xs font-semibold text-green-600 hover:text-green-800 hover:bg-green-100 p-1 rounded-md">إظهار</button>
+          </div>
+        } @empty {
+           <div class="text-center text-gray-400 p-8">
+            <p>لا توجد وحدات مخفية.</p>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+  
+  <div class="flex justify-end mt-4">
+    <button (click)="saveLayout()" class="px-6 py-2.5 font-semibold text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark shadow-md">حفظ التخطيط</button>
+  </div>
+
+</div>

@@ -1,0 +1,53 @@
+<div class="space-y-8 max-w-5xl mx-auto animate-fade-in">
+  <div class="text-center">
+    <h1 class="text-2xl font-bold text-gray-900">إدارة التغذية الراجعة للذكاء الاصطناعي</h1>
+    <p class="text-gray-500 mt-2">
+      مراجعة تقييمات المستخدمين لتفاعلات الذكاء الاصطناعي لتحسين جودة النموذج وتدريبه مستقبلاً.
+    </p>
+  </div>
+  
+  <div class="p-4 text-sm text-blue-800 rounded-lg bg-blue-50" role="alert">
+    <span class="font-medium">آلية العمل:</span> يتم هنا تجميع تقييمات المستخدمين. تم ربط هذه الواجهة بنظام الأتمتة <a href="https://auto.ph-ye.org" target="_blank" class="font-semibold underline hover:no-underline">n8n</a> لإرسال البيانات الجيدة تلقائياً إلى مستودع <a href="https://git.ph-ye.org" target="_blank" class="font-semibold underline hover:no-underline">Gitea</a>، حيث يتم تجهيزها لعمليات إعادة تدريب النموذج (Fine-tuning) المستقبلية.
+  </div>
+
+  <div class="bg-base-200/50 p-6 rounded-xl shadow-inner">
+      <div class="flex-grow overflow-x-auto relative shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-right text-gray-500">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+              <th scope="col" class="py-3 px-6">التقييم</th>
+              <th scope="col" class="py-3 px-6">سؤال المستخدم (Prompt)</th>
+              <th scope="col" class="py-3 px-6">إجابة النموذج</th>
+              <th scope="col" class="py-3 px-6">المستخدم</th>
+              <th scope="col" class="py-3 px-6">الإجراء</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for(entry of feedbackEntries(); track entry.id) {
+              <tr class="bg-white border-b">
+                <td class="py-4 px-6">
+                  @if (entry.rating === 'good') {
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-green-100 text-green-800">جيد</span>
+                  } @else {
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-800">سيء</span>
+                  }
+                </td>
+                <td class="py-4 px-6"><p class="max-w-xs truncate">{{ entry.prompt }}</p></td>
+                <td class="py-4 px-6"><p class="max-w-xs truncate">{{ entry.response }}</p></td>
+                <td class="py-4 px-6 font-medium">{{ entry.user }}</td>
+                <td class="py-4 px-6">
+                  <button (click)="archiveFeedback(entry.id)" class="font-medium text-ph-blue hover:underline">أرشفة</button>
+                </td>
+              </tr>
+            } @empty {
+                 <tr class="bg-white border-b">
+                    <td colspan="5" class="py-4 px-6 text-center text-gray-500">
+                        لا توجد تقييمات جديدة للمراجعة.
+                    </td>
+                </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>

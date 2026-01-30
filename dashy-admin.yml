@@ -1,0 +1,55 @@
+# dashy-admin.yml - لوحة تحكم مدير النظام (V18.0)
+pageInfo:
+  title:  YemenJPT - Digital Newsroom
+  description: System & Intelligence Engineering Overview
+  logo: https://i.ibb.co/L9wY6h1/ai-chip-logo.png
+sections:
+  - name: Core Infrastructure
+    icon: fas fa-server
+    items:
+      - title: Container Management
+        description: Manage all Docker containers
+        icon: hl-docker
+        url: "https://portainer.${DOMAIN}" # Assuming Portainer is used, common admin tool
+      - title: Real-time Monitoring
+        description: Live server performance stats
+        icon: hl-line-chart
+        url: "https://glances.${DOMAIN}"
+      - title: Service Status
+        description: Uptime monitoring for all services
+        icon: hl-heartbeat
+        url: "https://status.${DOMAIN}"
+      - title: Identity Management
+        description: Manage users, roles, and SSO
+        icon: hl-users-cog
+        url: "https://auth.${DOMAIN}"
+
+  - name: Intelligence Engineering
+    icon: fas fa-brain
+    items:
+      - title: AI Feedback Loop
+        description: Review and correct AI interactions (Langfuse)
+        icon: hl-edit
+        url: "https://feedback.${DOMAIN}"
+      - title: Vector DB Console
+        description: Manage the RAG memory (Qdrant)
+        icon: hl-database
+        url: "https://qdrant.${DOMAIN}/dashboard"
+      - title: AI Model Interface
+        description: Manage local models (Open WebUI)
+        icon: hl-robot
+        url: "https://ai-ui.${DOMAIN}"
+
+  - name: 🚨 Panic Button
+    widgets:
+    - type: button
+      id: activate-panic-button
+      options:
+        label: Activate Digital Chameleon
+        icon: "fas fa-exclamation-triangle"
+        backgroundColor: "rgba(220, 38, 38, 0.75)"
+        target: new-tab
+        url: "/api/panic-trigger"
+        method: POST
+        headers:
+          Authorization: "Bearer ${ADMIN_API_KEY}"

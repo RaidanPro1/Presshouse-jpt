@@ -1,0 +1,135 @@
+<div class="bg-base-100 p-6 rounded-xl shadow h-full flex flex-col">
+  <div class="flex-shrink-0">
+    <p class="text-gray-600 mb-4">
+      استخدم هذا المحلل للحصول على تقييم استباقي للمواقف بناءً على المؤشرات غير المباشرة (Proxy Indicators) بدلاً من الأخبار الرسمية. أدخل استفسارك (مثال: "ما هو الوضع في مأرب؟") للحصول على تقرير إنذار مبكر.
+    </p>
+    <div class="flex items-start gap-2 mb-6">
+      <textarea 
+        [(ngModel)]="query"
+        (keyup.enter)="generateReport()"
+        placeholder="أدخل استفسارك المفصل هنا..." 
+        rows="3"
+        class="flex-grow p-3 rounded-lg border border-gray-300 bg-gray-50 focus:ring-ph-blue focus:border-ph-blue resize-none"></textarea>
+      <button 
+        (click)="generateReport()" 
+        [disabled]="isLoading() || !query()"
+        class="p-3 bg-ph-blue text-white rounded-lg hover:bg-ph-blue-dark disabled:bg-gray-400 flex items-center justify-center w-32 self-stretch">
+        @if (isLoading()) {
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        } @else {
+          <span>تحليل</span>
+        }
+      </button>
+    </div>
+  </div>
+  
+  <div class="flex-grow overflow-y-auto pr-4">
+    @if (report(); as r) {
+      <div class="border border-gray-200 rounded-lg p-6 animate-fade-in">
+        <h2 class="text-2xl font-bold">🚨 تقرير إنذار مبكر: <span class="font-normal text-base">{{ r.date }}</span></h2>
+        
+        <!-- Summary & Threat -->
+        <div class="mt-4 p-4 rounded-lg" [ngClass]="{
+          'bg-red-50 border-red-200': r.threatLevel === 'High',
+          'bg-yellow-50 border-yellow-200': r.threatLevel === 'Medium',
+          'bg-green-50 border-green-200': r.threatLevel === 'Low'
+        }">
+          <h3 class="font-bold text-lg" [ngClass]="{
+            'text-red-800': r.threatLevel === 'High',
+            'text-yellow-800': r.threatLevel === 'Medium',
+            'text-green-800': r.threatLevel === 'Low'
+          }">
+            1. الملخص التنفيذي (مستوى الخطر: {{ r.threatLevel }})
+          </h3>
+          <p class="mt-1">{{ r.summary }}</p>
+        </div>
+
+        <!-- Indicators -->
+        <div class="mt-6">
+          <h3 class="font-bold text-lg text-gray-800">2. المؤشرات النشطة</h3>
+          <div class="mt-2 space-y-3">
+            @for (indicator of r.indicators; track indicator.name) {
+              <div class="p-3 border-s-4 rounded-r-md bg-base-200/50" [ngClass]="{
+                'border-red-500': indicator.confidence === 'High',
+                'border-yellow-500': indicator.confidence === 'Medium',
+                'border-green-500': indicator.confidence === 'Low'
+              }">
+                <div class="flex justify-between items-center">
+                  <p class="font-semibold">{{ indicator.name }}</p>
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full" [ngClass]="{
+                    'bg-red-100 text-red-800': indicator.confidence === 'High',
+                    'bg-yellow-100 text-yellow-800': indicator.confidence === 'Medium',
+                    'bg-green-100 text-green-800': indicator.confidence === 'Low'
+                  }">
+                    ثقة: {{ indicator.confidence }}
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 mt-1">{{ indicator.description }}</p>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Correlation -->
+        <div class="mt-6">
+          <h3 class="font-bold text-lg text-gray-800">3. تحليل الترابط</h3>
+          <p class="mt-2 p-3 bg-base-200/50 rounded-md">{{ r.correlation }}</p>
+        </div>
+        
+        <!-- Scenarios -->
+        <div class="mt-6">
+          <h3 class="font-bold text-lg text-gray-800">4. السيناريوهات المحتملة</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+            <div class="p-3 bg-blue-50 rounded-md">
+              <h4 class="font-semibold text-blue-800">السيناريو الأكثر ترجيحاً</h4>
+              <p class="text-sm">{{ r.scenarios.mostLikely }}</p>
+            </div>
+            <div class="p-3 bg-orange-50 rounded-md">
+              <h4 class="font-semibold text-orange-800">السيناريو الأسوأ</h4>
+              <p class="text-sm">{{ r.scenarios.worstCase }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recommendations -->
+        <div class="mt-6">
+          <h3 class="font-bold text-lg text-gray-800">5. توصيات للصحفيين</h3>
+          <ul class="list-disc list-inside mt-2 space-y-1 p-3 bg-base-200/50 rounded-md">
+            @for (rec of r.recommendations; track rec) {
+              <li>{{ rec }}</li>
+            }
+          </ul>
+        </div>
+        
+        <!-- Feedback -->
+        <div class="mt-8 text-center">
+          <p class="text-sm text-gray-600 mb-2">هل كان هذا التحليل مفيداً؟</p>
+          @if (feedbackSent()) {
+            <p class="text-green-600 font-semibold">شكراً لتقييمك!</p>
+          } @else {
+            <div class="flex justify-center gap-2">
+              <button (click)="sendFeedback('helpful')" class="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full hover:bg-green-200">
+                👍 مفيد
+              </button>
+              <button (click)="sendFeedback('not-helpful')" class="px-3 py-1 text-sm bg-red-100 text-red-700 rounded-full hover:bg-red-200">
+                👎 غير مفيد
+              </button>
+            </div>
+          }
+        </div>
+
+      </div>
+    } @else if (!isLoading()) {
+       <div class="flex flex-col items-center justify-center h-full text-center text-gray-500">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-16 h-16 mb-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.007H12v-.007Z" />
+          </svg>
+          <h3 class="text-xl font-semibold">جاهز للتحليل</h3>
+          <p>أدخل استفسارك في الأعلى لبدء عملية تحليل الإنذار المبكر.</p>
+       </div>
+    }
+  </div>
+</div>

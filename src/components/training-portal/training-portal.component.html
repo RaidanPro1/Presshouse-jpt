@@ -1,0 +1,63 @@
+<div class="space-y-8 animate-fade-in">
+  <div>
+    <h1 class="text-3xl font-bold text-gray-900">بوابة التدريب والتطوير</h1>
+    <p class="text-gray-500 mt-1">
+      مركز متكامل لإدارة الدورات التدريبية، من الإعلان والتسجيل إلى البث المباشر ومشاركة المواد.
+    </p>
+  </div>
+
+  <!-- Workflow Steps -->
+  <section>
+    <h2 class="text-xl font-bold mb-4">سير عمل التدريب</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+      <!-- Step 1: Registration Form -->
+      <div class="bg-base-100 p-4 rounded-lg shadow-sm border-t-4 border-ph-blue">
+        <div class="text-2xl mb-2">1️⃣</div>
+        <h3 class="font-semibold">إنشاء استمارة التسجيل</h3>
+        <p class="text-xs text-gray-500 mt-1">
+          استخدم <span class="font-bold">ToolJet</span> لبناء استمارات تسجيل مخصصة للمتدربين والمدربين.
+        </p>
+      </div>
+      <!-- Step 2: Share Materials -->
+      <div class="bg-base-100 p-4 rounded-lg shadow-sm border-t-4 border-ph-blue">
+        <div class="text-2xl mb-2">2️⃣</div>
+        <h3 class="font-semibold">مشاركة المواد التدريبية</h3>
+        <p class="text-xs text-gray-500 mt-1">
+          ارفع وشارك الملفات والمستندات مع المشاركين بشكل آمن عبر <span class="font-bold">Nextcloud</span>.
+        </p>
+      </div>
+      <!-- Step 3: Communicate -->
+      <div class="bg-base-100 p-4 rounded-lg shadow-sm border-t-4 border-ph-blue">
+        <div class="text-2xl mb-2">3️⃣</div>
+        <h3 class="font-semibold">التواصل مع المشاركين</h3>
+        <p class="text-xs text-gray-500 mt-1">
+          أنشئ قنوات نقاش خاصة لكل دورة تدريبية على <span class="font-bold">Mattermost</span>.
+        </p>
+      </div>
+      <!-- Step 4: Live Session -->
+      <div class="bg-base-100 p-4 rounded-lg shadow-sm border-t-4 border-ph-yellow">
+        <div class="text-2xl mb-2">4️⃣</div>
+        <h3 class="font-semibold">بث التدريب مباشرة</h3>
+        <p class="text-xs text-gray-500 mt-1">
+          ابدأ الجلسة التدريبية المباشرة عبر منصة المؤتمرات <span class="font-bold">BigBlueButton</span>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Section -->
+  <section>
+    <h2 class="text-xl font-bold mb-4">أدوات بوابة التدريب</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (tool of trainingTools(); track tool.id) {
+        <app-tool-card 
+          [tool]="tool" 
+          [userRole]="user()?.role ?? 'guest'"
+          (toggleStatus)="handleToolToggle($event)"
+          (toggleFavorite)="handleToggleFavorite($event)"
+          (runTool)="handleRunTool($event)"></app-tool-card>
+      }
+    </div>
+  </section>
+
+</div>

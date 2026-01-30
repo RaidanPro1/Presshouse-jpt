@@ -1,0 +1,43 @@
+
+<div class="space-y-8 max-w-4xl mx-auto animate-fade-in">
+  <div class="text-center">
+    <h1 class="text-2xl font-bold text-gray-900">إدارة بوتات التواصل الاجتماعي</h1>
+    <p class="text-gray-500 mt-2">
+      مراقبة وإدارة قنوات التواصل الآلي للمنصة عبر واتساب وتيليجرام.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    @for(bot of bots(); track bot.name) {
+      <div class="bg-base-200/50 p-6 rounded-xl shadow-inner">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold text-gray-900 flex items-center">
+            @if(bot.icon === 'whatsapp') {
+              <svg class="w-6 h-6 me-2 text-green-500" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6,14.2c-0.3-0.1-1.5-0.7-1.7-0.8c-0.2-0.1-0.4-0.1-0.6,0.1c-0.2,0.2-0.7,0.8-0.8,1c-0.1,0.2-0.2,0.2-0.4,0.1c-0.2-0.1-1-0.4-1.9-1.2c-0.7-0.6-1.2-1.4-1.3-1.6c-0.1-0.2,0-0.4,0.1-0.5c0.1-0.1,0.2-0.2,0.4-0.4c0.1-0.1,0.2-0.2,0.2-0.4c0.1-0.1,0-0.2,0-0.4c-0.1-0.1-0.6-1.5-0.8-2c-0.2-0.5-0.4-0.5-0.6-0.5h-0.5c-0.2,0-0.5,0.1-0.8,0.4c-0.3,0.3-1,1-1,2.5c0,1.5,1,2.9,1.2,3.1c0.2,0.2,2,3.2,4.9,4.3c0.7,0.3,1.2,0.4,1.6,0.5c0.7,0.2,1.3,0.1,1.8-0.1c0.5-0.2,1.5-0.8,1.7-1.5c0.2-0.7,0.2-1.4,0.1-1.5C17,14.4,16.8,14.3,16.6,14.2z M12,2C6.5,2,2,6.5,2,12s4.5,10,10,10c5.5,0,10-4.5,10-10S17.5,2,12,2z M12,20.5c-4.7,0-8.5-3.8-8.5-8.5S7.3,3.5,12,3.5s8.5,3.8,8.5,8.5S16.7,20.5,12,20.5z"/></svg>
+            }
+             @if(bot.icon === 'telegram') {
+              <svg class="w-6 h-6 me-2 text-sky-500" viewBox="0 0 24 24" fill="currentColor"><path d="m9.417 15.181-.397 5.584c.568 0 .814-.244 1.109-.537l2.663-2.545 5.518 4.041c1.012.564 1.725.267 1.998-.931L23.622 5.272c.272-1.21-.488-1.699-1.262-1.428L1.114 9.44c-1.21.49-1.201 1.23-.224 1.585l5.013 1.567L18.33 6.889c.575-.356 1.123-.164.682.221" /></svg>
+            }
+            {{ bot.name }}
+          </h2>
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-green-100 text-green-800">{{ bot.status }}</span>
+        </div>
+        <p class="text-sm text-gray-600 mt-2">
+          القناة: {{ bot.channel }}
+        </p>
+        <a [href]="bot.url" target="_blank" class="mt-4 inline-block text-sm font-semibold text-ph-blue hover:underline">إدارة الواجهة البرمجية &rarr;</a>
+      </div>
+    }
+  </div>
+  
+  <div class="bg-base-100 p-6 rounded-xl shadow text-center">
+     <h2 class="text-xl font-bold text-gray-900">إدارة القنوات عبر Chatwoot</h2>
+     <p class="text-gray-600 my-3 max-w-2xl mx-auto">
+        يتم إدارة جميع قنوات التواصل والبوتات بشكل مركزي عبر منصة Chatwoot. من هناك يمكنك مراجعة المحادثات، تعيينها للمستخدمين، والتحكم في إعدادات كل قناة.
+     </p>
+     <a [href]="chatwootUrl" target="_blank" rel="noopener noreferrer" class="mt-4 inline-block px-6 py-3 font-semibold text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition-transform hover:scale-105">
+        الانتقال إلى لوحة تحكم Chatwoot
+     </a>
+  </div>
+
+</div>

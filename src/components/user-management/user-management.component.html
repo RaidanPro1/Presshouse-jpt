@@ -1,0 +1,145 @@
+<div class="bg-base-100 p-6 rounded-xl shadow h-full flex flex-col animate-fade-in">
+  <div class="flex-shrink-0 flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">إدارة المستخدمين والصلاحيات</h1>
+      <p class="text-gray-600">إدارة حسابات المستخدمين المسجلين في المنصة وتحديد أدوارهم.</p>
+    </div>
+    <button (click)="openAddModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark flex items-center shadow hover:shadow-md transform hover:-translate-y-px transition-all">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 me-2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+      إضافة مستخدم جديد
+    </button>
+  </div>
+
+  <!-- Search Input -->
+  <div class="mb-4">
+    <label for="table-search" class="sr-only">بحث</label>
+    <div class="relative">
+      <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+        <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/></svg>
+      </div>
+      <input 
+        type="text" 
+        id="table-search" 
+        (input)="onSearch($event)"
+        class="block w-full sm:w-80 p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-ph-blue focus:border-ph-blue" 
+        placeholder="ابحث عن مستخدم بالاسم أو البريد">
+    </div>
+  </div>
+
+  <div class="flex-grow overflow-x-auto relative shadow-md sm:rounded-lg">
+    <table class="w-full text-sm text-right text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+                <th scope="col" class="py-3 px-6">المستخدم</th>
+                <th scope="col" class="py-3 px-6">الدور</th>
+                <th scope="col" class="py-3 px-6">تاريخ الانضمام</th>
+                <th scope="col" class="py-3 px-6">الحالة</th>
+                <th scope="col" class="py-3 px-6 text-center">الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for(user of paginatedUsers(); track user.id) {
+              <tr class="bg-white border-b hover:bg-gray-50">
+                  <td class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap flex items-center">
+                      <img [src]="user.avatar" alt="User Avatar" class="w-8 h-8 rounded-full me-3 bg-gray-200 object-cover">
+                      <div>
+                        <div class="font-bold">{{ user.name }}</div>
+                        <div class="text-xs text-gray-500">{{ user.email }}</div>
+                      </div>
+                  </td>
+                  <td class="py-4 px-6">{{ getRoleDisplayName(user.role) }}</td>
+                  <td class="py-4 px-6">{{ user.joinedDate }}</td>
+                  <td class="py-4 px-6">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-full" [ngClass]="user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+                      {{ user.status === 'active' ? 'نشط' : 'معلق' }}
+                    </span>
+                  </td>
+                  <td class="py-4 px-6 text-center space-x-3">
+                    <button (click)="viewProfile(user.id)" class="font-medium text-green-600 hover:underline">عرض الملف الشخصي</button>
+                    @if (user.role !== 'super-admin') {
+                      <button (click)="openEditModal(user)" class="font-medium text-ph-blue hover:underline">تعديل</button>
+                      <button (click)="deleteUser(user.id)" class="font-medium text-red-600 hover:underline">حذف</button>
+                    }
+                  </td>
+              </tr>
+            } @empty {
+                <tr class="bg-white border-b">
+                    <td colspan="5" class="py-8 px-6 text-center text-gray-500">
+                        لا يوجد مستخدمون يطابقون بحثك.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+  </div>
+  
+  <!-- Pagination -->
+  @if(totalPages() > 1){
+    <nav class="flex items-center justify-between pt-4" aria-label="Table navigation">
+      <span class="text-sm font-normal text-gray-500">عرض <span class="font-semibold text-gray-900">{{ paginatedUsers().length }}</span> من <span class="font-semibold text-gray-900">{{ filteredUsers().length }}</span></span>
+      <ul class="inline-flex -space-x-px text-sm h-8">
+        <li>
+          <button (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50">السابق</button>
+        </li>
+        @for(page of [].constructor(totalPages()); let i = $index; track i) {
+            <li>
+                <button (click)="goToPage(i + 1)" class="flex items-center justify-center px-3 h-8 leading-tight border border-gray-300" [ngClass]="currentPage() === (i + 1) ? 'text-ph-blue bg-ph-blue-light' : 'text-gray-500 bg-white hover:bg-gray-100'">{{ i + 1 }}</button>
+            </li>
+        }
+        <li>
+          <button (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages()" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-50">التالي</button>
+        </li>
+      </ul>
+    </nav>
+  }
+</div>
+
+<!-- Add/Edit User Modal -->
+@if (isModalOpen()) {
+  <div class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center animate-fade-in" (click)="closeModal()">
+    <div class="bg-base-100 rounded-lg shadow-xl w-full max-w-lg p-6" (click)="$event.stopPropagation()">
+      <h3 class="text-2xl font-bold mb-6">{{ isEditMode() ? 'تعديل مستخدم' : 'إضافة مستخدم جديد' }}</h3>
+      
+      @if (selectedUser(); as user) {
+        <form #userForm="ngForm" (ngSubmit)="saveUser(user)">
+          <div class="space-y-4">
+            <div>
+              <label for="name" class="block mb-2 text-sm font-medium">الاسم الكامل</label>
+              <input type="text" name="name" [(ngModel)]="user.name" required class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5">
+            </div>
+             <div>
+              <label for="email" class="block mb-2 text-sm font-medium">البريد الإلكتروني</label>
+              <input type="email" name="email" [(ngModel)]="user.email" required class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+               <div>
+                <label for="role" class="block mb-2 text-sm font-medium">الدور</label>
+                <select name="role" [(ngModel)]="user.role" [disabled]="user.role === 'super-admin' && isEditMode()" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 disabled:opacity-50 disabled:cursor-not-allowed">
+                  @for (role of assignableRoles(); track role) {
+                    <option [value]="role">{{ getRoleDisplayName(role) }}</option>
+                  }
+                </select>
+              </div>
+              <div>
+                <label for="status" class="block mb-2 text-sm font-medium">الحالة</label>
+                <select name="status" [(ngModel)]="user.status" [disabled]="user.role === 'super-admin'" class="bg-gray-50 border border-gray-300 text-sm rounded-lg block w-full p-2.5 disabled:opacity-50 disabled:cursor-not-allowed">
+                  @for (status of statuses; track status) {
+                    <option [value]="status">{{ status === 'active' ? 'نشط' : 'معلق' }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="mt-8 flex justify-end gap-3">
+            <button type="button" (click)="closeModal()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-base-200 rounded-lg hover:bg-base-300">
+              إلغاء
+            </button>
+            <button type="submit" [disabled]="userForm.invalid" class="px-5 py-2.5 text-sm font-medium text-white bg-ph-blue rounded-lg hover:bg-ph-blue-dark disabled:bg-gray-400">
+              حفظ
+            </button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+}

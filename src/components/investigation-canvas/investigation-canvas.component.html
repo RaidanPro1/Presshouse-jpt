@@ -1,0 +1,146 @@
+
+<div class="h-full flex gap-6">
+  <!-- Tool Palette -->
+  <aside class="w-64 bg-base-100 p-4 rounded-xl shadow flex-shrink-0 flex flex-col">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">صندوق الأدوات</h2>
+    <div class="flex-grow overflow-y-auto pr-2">
+      @for(category of categories; track category) {
+        <div class="mb-4">
+          <h3 class="font-semibold text-ph-blue mb-2">{{ category }}</h3>
+          <div class="space-y-2">
+            @for(tool of categorizedTools()[category]; track tool.id) {
+              <div 
+                class="p-2 border rounded-md bg-base-200 hover:bg-gray-200 cursor-grab flex items-center gap-2 transition-colors duration-200"
+                [class.bg-blue-50]="hoveredTool()?.id === tool.id"
+                [class.border-blue-200]="hoveredTool()?.id === tool.id"
+                [class.ring-1]="hoveredTool()?.id === tool.id"
+                [class.ring-ph-blue]="hoveredTool()?.id === tool.id"
+                draggable="true"
+                (mouseenter)="hoveredTool.set(tool)"
+                (mouseleave)="hoveredTool.set(null)"
+                (dragstart)="onToolDragStart($event, tool)">
+                <div class="w-6 h-6 flex items-center justify-center rounded-md flex-shrink-0" [ngClass]="tool.iconColor.replace('text-', 'bg-').replace('-500', '-100').replace('-600', '-100')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4" [ngClass]="tool.iconColor"><path stroke-linecap="round" stroke-linejoin="round" [attr.d]="tool.iconSvg" /></svg>
+                </div>
+                <span class="text-xs font-semibold">{{ tool.name }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+    
+    <!-- Tool Description Panel (Tooltip) -->
+    <div class="mt-4 pt-4 border-t border-gray-200">
+      <div class="p-3 bg-base-200/80 rounded-xl border border-gray-200 text-sm min-h-[140px] flex flex-col justify-center transition-all duration-300 relative overflow-hidden">
+         @if (hoveredTool(); as tool) {
+          <div class="animate-fade-in h-full flex flex-col">
+            <div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-300 flex-shrink-0">
+               <div class="w-6 h-6 flex items-center justify-center rounded-md" [ngClass]="tool.iconColor.replace('text-', 'bg-').replace('-500', '-100').replace('-600', '-100')">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4" [ngClass]="tool.iconColor"><path stroke-linecap="round" stroke-linejoin="round" [attr.d]="tool.iconSvg" /></svg>
+               </div>
+               <p class="font-bold text-gray-800 text-xs">{{ tool.name }}</p>
+            </div>
+            <p class="text-xs text-gray-600 leading-relaxed overflow-y-auto flex-grow">{{ tool.description }}</p>
+          </div>
+        } @else {
+          <div class="text-center text-gray-400 animate-fade-in">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 mx-auto mb-2 opacity-50"><path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" /></svg>
+            <p class="text-xs">حرك المؤشر فوق أداة لعرض وظيفتها واستخداماتها</p>
+          </div>
+        }
+      </div>
+    </div>
+  </aside>
+
+  <!-- Investigation Canvas -->
+  <main 
+    class="flex-grow bg-base-200/50 rounded-xl shadow-inner relative overflow-hidden investigation-canvas"
+    (dragover)="onCanvasDragOver($event)"
+    (drop)="onCanvasDrop($event)"
+    [style.background-image]="'radial-gradient(#d1d5db 1px, transparent 1px)'"
+    [style.background-size]="'20px 20px'">
+
+    <!-- SVG Layer for Connections -->
+    <svg class="absolute inset-0 w-full h-full pointer-events-none">
+      @for(path of connectionPaths(); track path) {
+        <path [attr.d]="path" stroke="#9ca3af" stroke-width="2.5" fill="none" stroke-linecap="round" />
+      }
+      @if (connectionLinePath()) {
+        <path [attr.d]="connectionLinePath()" stroke="#0D2B6B" stroke-width="2" stroke-dasharray="5 5" fill="none" />
+      }
+    </svg>
+
+    <!-- Nodes Layer -->
+    @for(node of nodes(); track node.id) {
+      <div 
+        class="absolute w-60 bg-white rounded-lg shadow-xl border-2 border-gray-200 select-none cursor-move animate-fade-in"
+        [style.left.px]="node.x"
+        [style.top.px]="node.y"
+        (mousedown)="onNodeDragStart($event, node.id)">
+        
+        <div class="p-2 border-b flex items-center gap-2 bg-base-100" [ngClass]="node.tool.iconColor.replace('text-', 'border-').replace('-500', '-300').replace('-600', '-300')">
+           <div class="w-6 h-6 flex items-center justify-center rounded-md flex-shrink-0" [ngClass]="node.tool.iconColor.replace('text-', 'bg-').replace('-500', '-100').replace('-600', '-100')">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4" [ngClass]="node.tool.iconColor"><path stroke-linecap="round" stroke-linejoin="round" [attr.d]="node.tool.iconSvg" /></svg>
+            </div>
+          <p class="font-bold text-sm truncate">{{ node.tool.name }}</p>
+        </div>
+        
+        <div class="p-3 text-xs text-gray-500">
+          انقر "تشغيل" لفتح الأداة.
+        </div>
+        
+        <div class="p-2 border-t flex justify-end bg-base-100">
+          <button (click)="runNodeTool($event, node.tool)" class="px-3 py-1 text-xs font-semibold text-white bg-ph-blue rounded-md hover:bg-ph-blue-dark">تشغيل</button>
+        </div>
+
+        <div 
+          class="connection-point absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-gray-300 rounded-full border-2 border-white cursor-crosshair hover:bg-ph-blue"
+          title="ربط إلى هنا"
+          (mouseup)="endConnection($event, node.id)">
+        </div>
+         <div 
+          class="connection-point absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-gray-300 rounded-full border-2 border-white cursor-crosshair hover:bg-ph-blue"
+          title="إنشاء اتصال من هنا"
+          (mousedown)="startConnection($event, node.id)">
+        </div>
+        
+        <button (click)="removeNode($event, node.id)" class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full text-xs leading-none hover:bg-red-700 flex items-center justify-center">&times;</button>
+      </div>
+    }
+
+     @if (nodes().length === 0 && !isAiBuilding()) {
+      <div class="absolute inset-0 flex items-center justify-center text-center text-gray-400 pointer-events-none">
+        <div>
+          <h3 class="text-xl font-semibold">لوحة التحقيقات</h3>
+          <p>اسحب أداة من القائمة اليسرى، أو استخدم شريط الأوامر الذكي في الأسفل.</p>
+        </div>
+      </div>
+    }
+
+    <!-- AI Command Bar -->
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-3xl z-10">
+       @if(aiError()) {
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg mb-2 text-sm text-center">
+            {{ aiError() }}
+        </div>
+      }
+      <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-2xl p-2 flex items-center gap-2 border border-gray-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-ph-blue flex-shrink-0 mx-2" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09ZM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456Z" /></svg>
+        <input 
+          [(ngModel)]="aiCommand"
+          (keyup.enter)="buildWorkflowWithAi()"
+          type="text" 
+          placeholder="اطلب من الذكاء الاصطناعي بناء سير عمل لك... (مثال: ابحث عن بصمة 'raidan' الرقمية ثم أرشف النتائج)"
+          class="flex-grow p-3 bg-transparent focus:outline-none text-sm w-full">
+        <button (click)="buildWorkflowWithAi()" [disabled]="isAiBuilding() || !aiCommand()" class="px-5 py-2.5 font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark disabled:bg-gray-400 flex items-center justify-center w-28 flex-shrink-0">
+          @if (isAiBuilding()) {
+             <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+          } @else {
+            <span>ابنِ</span>
+          }
+        </button>
+      </div>
+    </div>
+  </main>
+</div>

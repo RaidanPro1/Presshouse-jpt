@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>YemenJPT - Sovereign Media Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="منصة YemenJPT: منظومة رقمية سيادية ومتكاملة للصحفيين، توفر أدوات للتقصي مفتوح المصدر، التحقق، التحليل، والتعاون الآمن، مقدمة من بيت الصحافة - اليمن وبدعم من RaidanPro.">
+  <meta name="keywords" content="OSINT, Yemen, Journalism, Investigation, Press House, YemenJPT, الصحافة, اليمن, تحقيق, استقصاء, بيت الصحافة, تقصي مفتوح المصدر">
+  <link rel="icon" type="image/png" href="assets/logos/yemenjpt-light.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Cairo:wght@400;700;900&family=Fira+Code:wght@400;700&family=Changa:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Typography */
+      --font-display: 'Cairo', sans-serif;
+      --font-sans: 'IBM Plex Sans Arabic', sans-serif;
+      --font-mono: 'Fira Code', monospace;
+      --font-sakhr: 'Changa', sans-serif;
+    }
+    .dark {
+        /* Sovereign Dark Theme Colors */
+        --background: 220 30% 8%;
+        --foreground: 210 20% 90%;
+        --primary: 219 100% 26%;
+        --accent: 46 100% 45%;
+        --card: 222 30% 12%;
+        --border: 219 30% 15%;
+    }
+    body { font-family: var(--font-sans); }
+    h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 700; }
+    .font-mono { font-family: var(--font-mono); }
+    .transition-all { transition: all 0.3s ease-in-out; }
+    
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in-up { 
+      animation: fadeInUp 0.6s ease-out forwards;
+      opacity: 0;
+    }
+    
+    @keyframes lightUp {
+      0% { opacity: 0; text-shadow: none; transform: translateY(10px); }
+      50% { opacity: 0.8; text-shadow: 0 0 10px hsl(var(--primary) / 0.2); }
+      100% { opacity: 1; text-shadow: 0 0 20px hsl(var(--primary) / 0.4); transform: translateY(0); }
+    }
+    .animate-light-up { animation: lightUp 1s ease-out forwards; opacity: 0; }
+
+    @keyframes blink { 50% { opacity: 0; } }
+    .typewriter-cursor { color: hsl(var(--accent)); }
+
+    @keyframes scaleInDropdown {
+      from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .animate-scale-in-dropdown { transform-origin: top left; animation: scaleInDropdown 0.1s ease-out forwards; }
+
+    /* Custom Scrollbars for Dark Theme */
+    .dark ::-webkit-scrollbar { width: 8px; height: 8px; }
+    .dark ::-webkit-scrollbar-track { background: transparent; }
+    .dark ::-webkit-scrollbar-thumb { background-color: hsl(var(--primary) / 0.5); border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+    .dark ::-webkit-scrollbar-thumb:hover { background-color: hsl(var(--accent) / 0.8); }
+  </style>
+  <style id="app-theme"></style>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            // Sovereign Dark Theme Palette
+            background: 'hsl(var(--background) / <alpha-value>)',
+            foreground: 'hsl(var(--foreground) / <alpha-value>)',
+            primary: 'hsl(var(--primary) / <alpha-value>)',
+            accent: 'hsl(var(--accent) / <alpha-value>)',
+            card: 'hsl(var(--card) / <alpha-value>)',
+            border: 'hsl(var(--border) / <alpha-value>)',
+
+            // Press House Light Theme Palette
+            'ph-blue': '#0D2B6B',
+            'ph-blue-dark': '#0A2256',
+            'ph-yellow': '#F2C000',
+            'ph-yellow-dark': '#D9AC00',
+            
+            // Base Light Theme Grays
+            'base-100': '#FFFFFF',
+            'base-200': '#F9FAFB',
+            'base-300': '#F3F4F6',
+          },
+          fontFamily: {
+             sans: ['IBM Plex Sans Arabic', 'Inter', 'sans-serif'],
+             display: ['Cairo', 'sans-serif'],
+             mono: ['Fira Code', 'monospace'],
+             sakhr: ['Changa', 'sans-serif'],
+          },
+          borderRadius: {
+             'sm': '3px',
+             'md': '6px',
+             'lg': '9px',
+          }
+        },
+      },
+    }
+  </script>
+<script type="importmap">
+{
+  "imports": {
+    "rxjs": "https://esm.sh/rxjs@^7.8.2?conditions=es2015",
+    "rxjs/operators": "https://esm.sh/rxjs@^7.8.2/operators?conditions=es2015",
+    "rxjs/ajax": "https://esm.sh/rxjs@^7.8.2/ajax?conditions=es2015",
+    "rxjs/webSocket": "https://esm.sh/rxjs@^7.8.2/webSocket?conditions=es2015",
+    "rxjs/testing": "https://esm.sh/rxjs@^7.8.2/testing?conditions=es2015",
+    "rxjs/fetch": "https://esm.sh/rxjs@^7.8.2/fetch?conditions=es2015",
+    "@angular/compiler": "https://esm.sh/@angular/compiler@^21.1.0?external=rxjs",
+    "@angular/platform-browser": "https://esm.sh/@angular/platform-browser@^21.1.0?external=rxjs",
+    "@angular/common/http": "https://esm.sh/@angular/common@^21.1.0/http?external=rxjs",
+    "@angular/core": "https://esm.sh/@angular/core@^21.1.0?external=rxjs",
+    "@angular/common": "https://esm.sh/@angular/common@^21.1.0?external=rxjs",
+    "@angular/forms": "https://esm.sh/@angular/forms@^21.1.0?external=rxjs",
+    "@google/genai": "https://esm.sh/@google/genai@^1.37.0?external=rxjs"
+  }
+}
+</script>
+</head>
+<body class="bg-base-200 text-gray-800 font-sans">
+  <app-root></app-root>
+</body>
+</html>

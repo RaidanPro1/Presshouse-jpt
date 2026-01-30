@@ -1,0 +1,60 @@
+<section class="space-y-8">
+  <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-ph-yellow pb-2">إدارة وحدة "حقيقة" للتحقق الجنائي</h2>
+  
+  <div class="bg-base-100 p-6 rounded-xl shadow space-y-6">
+    <div>
+      <h3 class="text-xl font-bold text-gray-900">إدارة الوحدات الفرعية</h3>
+      <p class="text-gray-500 mt-1 text-sm">تفعيل أو تعطيل الأنظمة الفرعية لمنصة "حقيقة". قد يؤثر تعطيلها على قدرات التحقق من الأدلة.</p>
+    </div>
+    
+    <div class="space-y-4 p-4 border rounded-lg bg-base-200/50">
+      <div class="flex items-center justify-between">
+        <div>
+          <h4 class="font-semibold text-gray-800">تفعيل كاشف التزييف العميق (Haqiqa)</h4>
+          <p class="text-xs text-gray-500">تمكين تحليل الفيديو والصوت المتقدم لكشف التلاعب.</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" [checked]="settingsService.isHaqiqaDeepfakeDetectionEnabled()" (change)="settingsService.isHaqiqaDeepfakeDetectionEnabled.set($any($event.target).checked)" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ph-blue"></div>
+        </label>
+      </div>
+      <hr>
+      <div class="flex items-center justify-between">
+        <div>
+          <h4 class="font-semibold text-gray-800">تفعيل التحليل الجنائي للصور (ELA)</h4>
+          <p class="text-xs text-gray-500">تمكين تحليل مستوى الخطأ في الصور لكشف التعديلات.</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" [checked]="settingsService.isHaqiqaForensicAnalysisEnabled()" (change)="settingsService.isHaqiqaForensicAnalysisEnabled.set($any($event.target).checked)" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ph-blue"></div>
+        </label>
+      </div>
+       <hr>
+       <div class="flex items-center justify-between">
+        <div>
+          <h4 class="font-semibold text-gray-800">تفعيل مسح OSINT عبر (SpiderFoot)</h4>
+          <p class="text-xs text-gray-500">تمكين عمليات المسح الآلي لجمع المعلومات مفتوحة المصدر.</p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" [(ngModel)]="isSpiderFootEnabled" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-ph-blue"></div>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-base-100 p-6 rounded-xl shadow">
+    <h3 class="text-xl font-bold text-gray-900 mb-4">مراقبة الموارد</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-base-200 p-4 rounded-lg">
+            <p class="text-sm text-gray-500">استهلاك Gemini Tokens (هذا الشهر)</p>
+            <p class="text-2xl font-bold text-gray-800">1,250,000</p>
+        </div>
+        <div class="bg-base-200 p-4 rounded-lg">
+            <p class="text-sm text-gray-500">استخدام وحدة المعالجة المركزية (CPU) لمعالجة الفيديو</p>
+            <p class="text-2xl font-bold text-gray-800">78%</p>
+        </div>
+    </div>
+  </div>
+
+</section>

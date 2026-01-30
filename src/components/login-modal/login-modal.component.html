@@ -1,0 +1,35 @@
+<div class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center animate-fade-in" (click)="onClose()">
+  <div class="bg-base-100 rounded-2xl shadow-xl w-full max-w-md p-8 m-4 text-center" (click)="$event.stopPropagation()">
+    <img src="assets/logo.png" alt="Press House Logo" class="h-16 mx-auto mb-4">
+    <h2 class="text-2xl font-bold text-ph-blue">انتهت فترة التجربة المحدودة</h2>
+    <p class="mt-4 text-gray-600">
+      لقد استنفدت محاولاتك التجريبية. للحصول على وصول كامل وغير محدود لجميع أدوات التحقيق، يرجى تسجيل الدخول أو إنشاء حساب جديد.
+    </p>
+    <div class="mt-8 space-y-4">
+        <p class="text-sm font-semibold text-gray-500">انضم إلى مجتمع الصحفيين المحترفين الآن:</p>
+        <div class="flex items-center justify-center space-i-4">
+          <button (click)="onLogin()" class="p-3 rounded-full bg-base-200 hover:bg-gray-200 transition-transform hover:scale-110" title="Login with Google">
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-8 h-8" alt="Google Login">
+          </button>
+          <button (click)="onLogin()" class="p-3 rounded-full bg-base-200 hover:bg-gray-200 transition-transform hover:scale-110" title="Login with X">
+              <img src="https://www.svgrepo.com/show/513008/twitter-154.svg" class="w-8 h-8" alt="X Login">
+          </button>
+          <button (click)="onLogin()" class="p-3 rounded-full bg-base-200 hover:bg-gray-200 transition-transform hover:scale-110" title="Login with Facebook">
+              <img src="https://www.svgrepo.com/show/448224/facebook.svg" class="w-8 h-8" alt="Facebook Login">
+          </button>
+        </div>
+        <div class="relative flex py-3 items-center">
+            <div class="flex-grow border-t border-gray-300"></div>
+            <span class="flex-shrink mx-4 text-gray-400">أو</span>
+            <div class="flex-grow border-t border-gray-300"></div>
+        </div>
+        <button (click)="onLogin()" class="w-full px-8 py-3 text-lg font-bold text-white rounded-lg bg-ph-blue hover:bg-ph-blue-dark shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+            تسجيل الدخول
+        </button>
+         <button (click)="onNavigate('register')" class="w-full px-8 py-2 text-md font-semibold text-ph-blue rounded-lg transition-colors hover:bg-gray-100 border border-gray-200">
+            إنشاء حساب جديد
+        </button>
+    </div>
+    <button (click)="onClose()" class="mt-6 text-sm text-gray-500 hover:underline">المتابعة كزائر</button>
+  </div>
+</div>

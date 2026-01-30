@@ -1,0 +1,101 @@
+
+<div class="bg-base-100 animate-fade-in-up">
+  <!-- Hero Section -->
+  <section class="bg-base-100 py-20 md:py-28">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-4xl md:text-6xl font-extrabold text-ph-blue leading-tight tracking-tight">
+        منصة YemenJPT الرقمية
+      </h1>
+      <p class="mt-6 text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        بيئة عمل رقمية سيادية ومؤمنة، مصممة خصيماً لتمكين الصحافة الاستقصائية في اليمن. أدوات للتقصي، التحقق، والتحليل في مكان واحد.
+      </p>
+      <div class="mt-10">
+        <button (click)="onLoginClick()" class="px-8 py-4 text-lg font-bold text-white rounded-full bg-ph-blue hover:bg-ph-blue-dark shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+          ابدأ تجربتك
+        </button>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Section 1: Contextual Features (replaces 'Why Global Models Fail') -->
+  <section class="py-20 bg-base-200">
+      <div class="container mx-auto px-4 max-w-6xl animate-fade-in-up">
+          <div class="text-center mb-16">
+              <h2 class="text-3xl md:text-4xl font-bold text-gray-800">مصممة خصيصاً للسياق اليمني</h2>
+              <p class="mt-4 text-lg text-gray-600">على عكس النماذج العالمية، تم بناء YemenJPT لفهم الفروق الدقيقة للواقع اليمني.</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+              @for (card of contextualFeatures; track card.title; let i = $index) {
+                <div class="bg-white p-8 rounded-2xl text-center transition-all duration-300 animate-fade-in-up" [style.animation-delay]="(0.2 + i * 0.1) + 's'">
+                    <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 bg-base-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-9 h-9" [ngClass]="'text-' + card.color + '-600'">
+                          <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="card.icon" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">{{ card.title }}</h3>
+                    <p class="text-gray-600 leading-relaxed">{{ card.description }}</p>
+                </div>
+              }
+          </div>
+      </div>
+  </section>
+
+  <!-- Alternating Feature Sections -->
+  @for (section of featureSections; track section.title; let i = $index) {
+    <section class="py-20 md:py-28 animate-fade-in-up">
+      <div class="container mx-auto px-4 max-w-6xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
+          <!-- Image Column -->
+          <div [class.md:order-last]="section.imagePosition === 'right'">
+            <img [src]="section.imageUrl" alt="{{ section.title }}" class="rounded-2xl shadow-2xl w-full h-auto object-cover aspect-[4/3]">
+          </div>
+          <!-- Text Column -->
+          <div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-snug">{{ section.title }}</h2>
+            <p class="mt-6 text-lg text-gray-600 leading-relaxed">{{ section.description }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Tools Section -->
+  <section class="py-16 md:py-24 animate-fade-in-up bg-base-200">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-ph-blue">ترسانة الأدوات الرقمية</h2>
+        <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
+          استكشف مجموعة الأدوات المتكاملة المصممة لكل مرحلة من مراحل التحقيق الصحفي.
+        </p>
+      </div>
+      
+      @for (category of categories; track category) {
+        <div class="mb-16">
+          <h3 class="text-2xl font-bold text-gray-800 mb-8 border-b-2 border-ph-yellow pb-3">{{ category }}</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            @for(tool of categorizedTools()[category]; track tool.id) {
+              <app-tool-card 
+                [tool]="tool" 
+                [userRole]="'public'"
+                mode="guest"
+                (trialClick)="onTrialClick()"></app-tool-card>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="py-20 md:py-28 bg-white">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-extrabold text-ph-blue">هل أنت جاهز لتعزيز عملك الصحفي؟</h2>
+      <p class="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">انضم إلى مجتمع الصحفيين الذين يستخدمون YemenJPT لكشف الحقائق.</p>
+      <div class="mt-10">
+         <button (click)="onLoginClick()" class="px-8 py-4 text-lg font-bold text-white rounded-full bg-ph-blue hover:bg-ph-blue-dark shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+          إنشاء حساب مجاني
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
