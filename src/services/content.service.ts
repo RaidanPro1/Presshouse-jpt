@@ -1,3 +1,4 @@
+
 import { Injectable, signal, effect } from '@angular/core';
 
 // --- Shared Interfaces for Content ---
@@ -28,6 +29,7 @@ export interface NewsArticle {
 export interface Partner {
   name: string;
   logoUrl: string;
+  url: string;
 }
 
 export interface TeamMember {
@@ -147,12 +149,12 @@ export class ContentService {
 
   private getDefaultPartners(): Partner[] {
     return [
-      { name: 'YoopYupFact', logoUrl: 'assets/logos/partners/yoopyupfact.png' },
-      { name: 'Qarar Foundation', logoUrl: 'assets/logos/partners/qarar.png' },
-      { name: 'Arnyada Foundation', logoUrl: 'assets/logos/partners/arnyada.png' },
-      { name: 'Wahaj Youth Bloc', logoUrl: 'assets/logos/partners/wahaj.png' },
-      { name: 'Alef Center', logoUrl: 'assets/logos/partners/alef.png' },
-      { name: 'RaidanPro', logoUrl: 'assets/logos/partners/raidanpro.png' },
+      { name: 'YoopYupFact', logoUrl: 'assets/logos/partners/yoopyupfact.png', url: 'javascript:void(0);' },
+      { name: 'Qarar Foundation', logoUrl: 'assets/logos/partners/qarar.png', url: 'javascript:void(0);' },
+      { name: 'Arnyada Foundation', logoUrl: 'assets/logos/partners/arnyada.png', url: 'javascript:void(0);' },
+      { name: 'Wahaj Youth Bloc', logoUrl: 'assets/logos/partners/wahaj.png', url: 'javascript:void(0);' },
+      { name: 'Alef Center', logoUrl: 'assets/logos/partners/alef.png', url: 'javascript:void(0);' },
+      { name: 'RaidanPro', logoUrl: 'assets/logos/partners/raidanpro.png', url: 'javascript:void(0);' },
     ];
   }
 

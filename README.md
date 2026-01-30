@@ -1,28 +1,23 @@
+# 🇾🇪 YemenJPT Digital Platform (V4.101 - Enterprise Production)
 
-# 🇾🇪 YemenJPT Digital Platform (V25.0 - Enterprise Edition)
+**YemenJPT (Yemen Journalist Pre-trained Transformer)** is a self-hosted, integrated digital ecosystem designed to empower journalists and media organizations in Yemen. The platform enhances press freedom by providing a secure, sovereign environment and a comprehensive suite of tools for Open Source Intelligence (OSINT), information verification, data analysis, and collaborative journalistic work.
 
-**YemenJPT (Yemen Journalist Pre-trained Transformer)** is a self-hosted, integrated digital ecosystem designed specifically to empower journalists and media organizations in Yemen. The platform enhances press freedom by providing a secure, sovereign environment and a comprehensive suite of tools for Open Source Intelligence (OSINT), information verification, data analysis, and collaborative journalistic work.
-
-This document serves as the primary technical guide for deploying and managing the YemenJPT platform.
+This document serves as the primary technical guide for deploying and managing the YemenJPT Enterprise platform.
 
 ---
 
-## ✨ 1. Vision & Core Features
+## ✨ 1. Core Features & Stack
 
-The platform is an all-in-one digital workspace providing critical capabilities for the modern investigative journalist. It is built on the principle of **data sovereignty**, allowing the entire system to run on private infrastructure, ensuring sensitive data never transits through third-party services. A key security feature is the **"Digital Chameleon" panic mode**, allowing an administrator to instantly switch the main application entry point to a decoy website in an emergency.
+The platform is an all-in-one digital workspace providing critical capabilities for the modern investigative journalist. It is built on the principle of **data sovereignty**, allowing the entire system to run on private infrastructure.
 
-### Core Platform Modules
-
-| Category                          | Tools & Features                                                                                                    | Purpose for Journalists                                                                                                   |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| **Cognitive Core (AI)**           | `Ollama`, `Open WebUI`, `Qdrant`, `Langfuse`, `LibreTranslate`, `Whisper WebUI`                                         | Accelerates research, transcribes interviews, provides a feedback mechanism for AI improvement, and enables secure translation.   |
-| **Data Factory (RLHF)**           | `Label Studio`                                                                                                      | Enables human-in-the-loop feedback to grade and correct AI responses, building a custom "Yemeni Instruct Dataset".          |
-| **Investigation & OSINT**         | `SearXNG`, `SpiderFoot`, `ChangeDetection.io`, `ArchiveBox`, `Social-Analyzer`                                      | Gathers intelligence, automates reconnaissance, tracks website changes, and creates permanent web archives.                   |
-| **Media Verification**            | `Meedan Check`                                                                                                      | Fights misinformation by providing a robust toolkit to verify the authenticity of images, videos, and claims.           |
-| **Media Broadcasting & Publishing** | `AzuraCast` (Radio), `Restreamer` (Video), `Ghost` (Blog/Newsletter), `Mixpost` (Social), `Poste.io` (Email Server) | Creates a full, sovereign media empire for broadcasting radio, live-streaming video, publishing articles, and managing social media. |
-| **Collaboration & Workflow**      | `Mattermost`, `Nextcloud`, `Webtop`, `n8n` (Automation), `Evolution API` (WhatsApp)                                   | Streamlines teamwork, allowing for secure communication, task management, isolated browsing, and workflow automation.        |
-| **System & Identity**             | `Keycloak` (SSO), `Vaultwarden` (Passwords), `Portainer`, `Glances`, `Uptime Kuma`                                     | Manages user identity, secures passwords, and provides tools for system monitoring and container management.              |
-| **Security**                      | Internal Nginx Proxy (Digital Chameleon) & Backend API for Docker control                                           | Provides an emergency decoy mechanism and allows secure, UI-driven management of container services.                     |
+| Category                | Service(s)                                                                       | Purpose                                                                                                     |
+| ----------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Core Infrastructure** | `Nginx Proxy Manager`, `Portainer`, `Watchtower`, `Cloudflare Tunnel`              | Secure external access, container management, and automated updates.                                        |
+| **Databases**           | `PostgreSQL`, `MariaDB`, `Redis`, `MinIO`                                        | Powering all applications with robust relational, cache, and S3-compatible object storage.                  |
+| **The Brain (AI)**      | `Ollama`, `Node.js Backend`, `Label Studio`, `n8n`                                 | Local LLM serving, data labeling for RLHF, workflow automation, and system control.                         |
+| **Media Empire**        | `Ghost`, `WordPress`, `AzuraCast`, `Restreamer`                                  | A complete sovereign media suite for blogging, news, radio broadcasting, and live video streaming.        |
+| **Security & Ops**      | `Vaultwarden`, `LanguageTool`, `Gitea`, `"Panic Button" Script`                    | Secure password management, grammar checking, self-hosted Git, and emergency shutdown protocols.            |
+| **Unified Controller**  | `Angular Dashboard`                                                              | The single pane of glass providing a unified UI for all platform capabilities.                              |
 
 ---
 
@@ -30,117 +25,87 @@ The platform is an all-in-one digital workspace providing critical capabilities 
 
 The application is built on a modern, containerized architecture designed for security, portability, and ease of management.
 
--   **Orchestration**: The entire stack is managed via **Docker Compose**, defining all services, volumes, and networks in a single, declarative file.
--   **Application**: An **Angular** frontend (`yemenjpt_app`) and a **Node.js** backend (`backend`) provide the main user interface and API layer. The backend includes a secure API for managing Docker services.
--   **AI Services**: **Ollama** and **Whisper** run on the server's CPU, providing local AI capabilities.
--   **Databases**: **PostgreSQL** and **MariaDB** serve as robust, persistent data stores for the various platform services.
--   **Identity**: **Keycloak** acts as a central Identity and Access Management (IAM) provider for Single Sign-On (SSO).
--   **Internal Proxy & Decoy**: A dedicated **Nginx** container (`internal_proxy`) is the key component of the "Digital Chameleon" panic mode, allowing it to dynamically switch traffic between the real frontend and a harmless decoy site.
--   **Dashboards**: **Dashy** is used to create role-specific portals, providing a unified user experience.
+-   **Orchestration**: The entire stack is managed via **Docker Compose**, defining all services, volumes, and networks.
+-   **Networking**: All services communicate over a secure, custom bridge network (`raidan_net`). Critical services have static IP addresses to prevent DNS resolution issues.
+-   **Gateway**: **Nginx Proxy Manager** serves as the primary external gateway, managing all subdomains and SSL certificates.
+-   **Security**: The "Digital Chameleon" panic mode is handled by a secondary **internal Nginx proxy** controlled by the backend API. This allows an administrator to instantly switch the main dashboard to a decoy site in an emergency.
+-   **Persistence**: All application data is persisted in local Docker volumes under `/opt/raidanpro/data`, ensuring no data loss on container restarts.
 
 ---
 
-## 🚀 3. Deployment Guide
+## 🚀 3. Zero-Fail Deployment Guide (Ubuntu 24.04 LTS)
 
-This guide is for deploying the platform on a fresh **Ubuntu 24.04 LTS** server.
+This guide details the automated installation process using the provided `install_master.sh` script for the domain `ph-ye.org`.
 
 ### 3.1. Prerequisites
 
-1.  **Server**: A fresh Ubuntu 24.04 LTS server with root access.
-2.  **Domain Name**: A domain you own (e.g., `ph-ye.org`).
-3.  **Git**: `git` command-line tool installed (`sudo apt install git`).
+1.  **Server**: A fresh Ubuntu 24.04 LTS server (or VM) with root access, with public IP `212.56.42.87`.
+2.  **Domain Name**: The domain `ph-ye.org`, with its DNS managed by Cloudflare.
+3.  **DNS Records**: Before starting, ensure you have an **A record** pointing your domain (`ph-ye.org`) and a wildcard A record (`*.ph-ye.org`) to your server's IP address (`212.56.42.87`).
+4.  **Git & Curl**: These will be installed automatically by the script if not present.
 
 ### 3.2. Automated Installation Steps
 
 1.  **Clone the Repository**
+    Log in to your server as a user with `sudo` privileges and clone the deployment repository.
     ```bash
-    git clone https://github.com/your-repo/YemenJPT-Platform.git
-    cd YemenJPT-Platform
+    git clone <your-repository-url>
+    cd <repository-directory>
     ```
 
 2.  **Configure Environment File (`.env`)**
-    This is the most critical step. Copy the example file and fill out all required values using a text editor like `nano`.
+    This is the most critical step. Copy the provided template and edit it to fill in your specific details. The `DOMAIN` is already set to `ph-ye.org`.
     ```bash
     cp .env.example .env
     nano .env
     ```
-    -   **`DOMAIN`**: Your main domain (e.g., `ph-ye.org`).
-    -   **Passwords**: Use a password manager to generate strong, unique passwords.
+    -   **Passwords**: Replace all `generate_...` placeholders with strong, unique passwords generated from a password manager. Alternatively, leave them, and the script will generate them for you.
+    -   **`CF_API_TOKEN`**: Provide your Cloudflare Tunnel token if you choose to use it.
 
-3.  **Run the Installation Script**
-    Make the script executable and run it as root. It will automate the entire setup process.
+3.  **Run the Installer Script**
+    Make the script executable and run it with `sudo`. It will automate the entire setup process.
     ```bash
-    chmod +x install.sh
-    sudo ./install.sh
+    chmod +x install_master.sh
+    sudo ./install_master.sh
     ```
-    The script will:
-    -   Install Docker and Docker Compose.
-    -   Create all necessary data directories under `/opt/presshouse`.
-    -   Copy all configuration files to `/opt/presshouse`.
-    -   Launch all services via Docker Compose.
+    The script will perform the following actions:
+    -   **Pre-flight Checks**: Verifies system resources and installs Docker, Git, and Curl if they are missing.
+    -   **Environment Setup**: Creates the final `.env` file with generated passwords for any that were left as defaults.
+    -   **Directory & Network**: Creates the `/opt/raidanpro` data structure and the `raidan_net` Docker network.
+    -   **Deployment**: Builds the custom frontend and backend images and launches the entire stack using `docker-compose up -d`.
+    -   **Health Check**: Monitors a key service until it is live, then confirms a successful installation.
 
-### 3.3. Accessing the Application
+### 3.3. Post-Installation: Nginx Proxy Manager Setup
 
-After the script finishes, services will be accessible on `localhost` at their specified ports. You will need to configure a reverse proxy (like Nginx or Traefik) to expose them to your domain.
--   **Main Application**: `http://localhost:8080`
--   **AzuraCast Radio**: `http://localhost:8088`
--   **Ghost Publishing**: `http://localhost:2368`
--   **Poste.io Mail Server**: `http://localhost:8089`
--   **Label Studio**: `http://localhost:8090`
--   **WhatsApp API**: `http://localhost:8093` (Evolution API)
--   ... and many more. Refer to `docker-compose.yml` for all port mappings.
+Once the script is complete, you must configure the gateway to expose your services.
+
+1.  Navigate to `http://212.56.42.87:8181`.
+2.  Log in to Nginx Proxy Manager for the first time. Default credentials are `admin@example.com` / `changeme`. You will be prompted to change these immediately.
+3.  Go to **Hosts -> Proxy Hosts** and click **"Add Proxy Host"**.
+4.  Create entries for each service. For example, to set up the main dashboard:
+    -   **Domain Names**: `dashboard.ph-ye.org`
+    -   **Scheme**: `http`
+    -   **Forward Hostname / IP**: `yemenjpt_frontend` (use the service name from `docker-compose.yml`)
+    -   **Forward Port**: `80`
+    -   Enable **"Block Common Exploits"**.
+    -   Go to the **SSL** tab, select **"Request a new SSL Certificate"**, enable **"Force SSL"** and **"HTTP/2 Support"**, and save.
+5.  Repeat this process for other services like `gitea.ph-ye.org` (port 3000), `portainer.ph-ye.org` (port 9000), etc., as needed.
 
 ---
 
-## 🛡️ 4. Security: Panic Mode & Service Control
+## 🔧 4. Maintenance & Operations
 
--   **Panic Mode**: The backend includes an API endpoint (`/api/panic`) which executes a script to shut down critical services in an emergency. This can be triggered from the Admin Dashboard.
--   **Service Control**: The backend also provides an API (`/api/service/:action`) to securely start, stop, and restart containers, managed via the "System Stats" panel in the Admin Dashboard.
+All operational commands should be run from the main application directory `/opt/raidanpro`.
 
----
-
-## 🔧 5. Maintenance & Operations
-
-All operational commands should be run from the main application directory.
-
--   **Updating the Application**: To apply updates from the Git repository:
-    ```bash
-    git pull
-    sudo ./deploy.sh
-    ```
 -   **Viewing Logs**: To see real-time logs from all running services:
     ```bash
-    cd /opt/presshouse && sudo docker compose logs -f
+    cd /opt/raidanpro && sudo docker compose logs -f
     ```
 -   **Stopping the Application**:
     ```bash
-    cd /opt/presshouse && sudo docker compose down
+    cd /opt/raidanpro && sudo docker compose down
     ```
 -   **Starting the Application**:
     ```bash
-    cd /opt/presshouse && sudo docker compose up -d
+    cd /opt/raidanpro && sudo docker compose up -d
     ```
-
----
-
-## 🧠 6. Model Context Protocol (MCP) & "Chat-to-Action"
-
-The core of YemenJPT's intelligence is the **Model Context Protocol (MCP)**, a "Chat-to-Action" orchestration layer implemented within the Angular frontend. It enables the AI to understand user requests in natural language and trigger actions on the platform.
-
-### 6.1. Architectural Flow
-
-1.  **User Input**: A user types a command into the "AI Core" chat (e.g., *"Launch a new radio station named YemenFM"*).
-
-2.  **Context Assembly (Frontend)**: Before sending the prompt to Gemini, the Angular application dynamically generates a `function_declaration` manifest based on the user's permissions. This manifest includes simple actions like `run_tool` and complex actions like `create_radio_station`.
-
-3.  **AI Deliberation (Gemini)**: The Gemini model receives the prompt and the manifest of available functions. It understands the user's intent and decides to call the appropriate function (e.g., `create_radio_station(stationName: 'YemenFM')`).
-
-4.  **Function Call Response**: The Gemini API returns a `functionCall` object, instructing the frontend to execute the function with the given arguments.
-
-5.  **Frontend Execution**: The Angular application receives the `functionCall`.
-    *   It identifies the requested action (e.g., `create_radio_station`).
-    *   It logs the action to the **Audit Log**.
-    *   It calls a secure backend API endpoint, which in turn executes a script to perform the action (e.g., uses the AzuraCast API or Docker commands).
-    *   It provides feedback in the chat interface: *"Understood. Initiating creation of radio station 'YemenFM'..."*.
-
-This implementation creates a powerful, context-aware, and secure orchestration system directly within the client, fulfilling the core vision of the YemenJPT platform.

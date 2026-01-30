@@ -1,3 +1,4 @@
+
 <div class="bg-base-100">
 
   <!-- Hero Slider Section -->
@@ -140,13 +141,13 @@
       </div>
       <div class="flex flex-wrap justify-center items-center gap-x-16 gap-y-8">
         @for(partner of partners(); track partner.name) {
-          <div class="h-20 flex items-center justify-center" title="{{ partner.name }}">
+          <a [href]="partner.url" target="_blank" rel="noopener noreferrer" class="h-20 flex items-center justify-center" title="{{ partner.name }}">
              @if (!settingsService.isLowBandwidthMode()) {
               <img [src]="partner.logoUrl" [alt]="partner.name" class="max-h-16 w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300">
             } @else {
               <div class="h-16 w-32 bg-gray-300 rounded flex items-center justify-center text-xs text-gray-500">{{partner.name}}</div>
             }
-          </div>
+          </a>
         }
       </div>
     </div>

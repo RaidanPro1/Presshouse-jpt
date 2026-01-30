@@ -73,15 +73,25 @@
     </div>
     
     <!-- Bottom Section -->
-    <div class="pt-8 mt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-      <div class="flex gap-x-6 gap-y-2 mb-4 md:mb-0">
-         <a (click)="onNavigate('privacy-policy')" href="javascript:void(0)" class="hover:text-white hover:underline">سياسة الخصوصية</a>
+    <div class="pt-8 mt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 gap-y-4">
+      
+      <!-- Legal Links (Visually right) -->
+      <div class="flex justify-center gap-x-6 gap-y-2">
+          <a (click)="onNavigate('privacy-policy')" href="javascript:void(0)" class="hover:text-white hover:underline">سياسة الخصوصية</a>
           <a (click)="onNavigate('terms-of-service')" href="javascript:void(0)" class="hover:text-white hover:underline">شروط الخدمة</a>
           <a (click)="onNavigate('disclaimer')" href="javascript:void(0)" class="hover:text-white hover:underline">إخلاء المسؤولية</a>
       </div>
-      <p>
-        © 2025 جميع الحقوق محفوظة لـ<a (click)="onNavigate('home')" href="javascript:void(0)" class="font-semibold text-gray-400 hover:text-white"> بيت الصحافة - اليمن</a>.
+      
+      <!-- Copyright (Center) -->
+      <p class="order-last md:order-none">
+          © 2026 جميع الحقوق محفوظة لـ بيت الصحافة - اليمن.
       </p>
+    
+      <!-- Powered By (Visually left) -->
+      <p>
+        Powered by <a href="https://raidan.pro" target="_blank" rel="noopener noreferrer" class="hover:text-white hover:underline">RaidanPro</a>
+      </p>
+      
     </div>
   </div>
 </footer>
