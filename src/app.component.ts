@@ -63,6 +63,7 @@ import { EmailManagementComponent } from './components/email-management/email-ma
 import { AuditLogComponent } from './components/audit-log/audit-log.component';
 import { HaqiqaManagementComponent } from './components/haqiqa-management/haqiqa-management.component';
 import { DashboardCustomizationComponent } from './components/dashboard-customization/dashboard-customization.component';
+import { SecuritySettingsComponent } from './components/security-settings/security-settings.component';
 
 // Services are correctly imported from ./services relative to src/app.component.ts
 import { UserService, UserRole } from './services/user.service';
@@ -136,6 +137,7 @@ import { TrialService } from './services/trial.service';
     AuditLogComponent,
     HaqiqaManagementComponent,
     DashboardCustomizationComponent,
+    SecuritySettingsComponent,
   ],
 })
 export class AppComponent {
